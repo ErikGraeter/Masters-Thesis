@@ -1,0 +1,74 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{thesis}[2026/08/21 Thesis macros and project style]
+
+% =======================================================
+% Utility packages
+% =======================================================
+\RequirePackage{xspace}
+
+% =======================================================
+% Frequently used astronomical notation
+% =======================================================
+\newcommand{\Mearth}{M_{\oplus}}
+\newcommand{\Rearth}{R_{\oplus}}
+\newcommand{\Searth}{S_{\oplus}}
+
+\newcommand{\Msun}{M_{\odot}}
+\newcommand{\Rsun}{R_{\odot}}
+\newcommand{\Lsun}{L_{\odot}}
+
+% =======================================================
+% Project terminology
+% =======================================================
+% All-caps acronyms; \xspace inserts a space after the macro when needed,
+% so `\PLATO detects` renders correctly without an explicit `\ `.
+\newcommand{\PLATO}{PLATO\xspace}
+\newcommand{\HZIED}{HZIED\xspace}
+\newcommand{\Kepler}{\textit{Kepler}\xspace}
+\newcommand{\TESS}{TESS\xspace}
+\newcommand{\SMA}{SMA\xspace}
+
+% =======================================================
+% Mathematical helpers
+% =======================================================
+\newcommand{\dd}{\mathop{}\!\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\ii}{\mathrm{i}}
+
+% =======================================================
+% Citation hyperlinks
+% =======================================================
+% \textcite{key}: author name links externally (arXiv if eprint field present,
+% DOI otherwise); the trailing [N] keeps its internal link to the bibliography.
+% xpatch replaces only the \printnames call so the numeric part is untouched.
+\RequirePackage{xpatch}
+\xpatchbibmacro{textcite}{%
+  \printnames{labelname}%
+}{%
+  \iffieldundef{eprint}{%
+    \iffieldundef{doi}{%
+      \printtext[bibhyperref]{\printnames{labelname}}%
+    }{%
+      \href{https://doi.org/\thefield{doi}}{\printnames{labelname}}%
+    }%
+  }{%
+    \href{https://arxiv.org/abs/\thefield{eprint}}{\printnames{labelname}}%
+  }%
+}{}{}
+
+% =======================================================
+% Draft helpers
+% =======================================================
+% \placeholder{} marks a value that must be filled in once the analysis has run.
+\newcommand{\placeholder}[1][]{\textcolor{red}{\textbf{[??]}}}
+
+% \openquestion{...} marks an inline open question / TODO in the prose.
+% Renders as red italic text prefixed with [?].
+% Grep-able before final submission: grep -rn "openquestion" Chapters/
+\newcommand{\openquestion}[1]{\textcolor{red}{\emph{[?]~#1}}}
+
+% =======================================================
+% Reusable figure widths
+% =======================================================
+\newcommand{\fullfigwidth}{\textwidth}
+\newcommand{\halffigwidth}{0.48\textwidth}

@@ -1,0 +1,42 @@
+# =======================================================
+# Global Matplotlib style for thesis figures
+# =======================================================
+
+# LaTeX rendering
+text.usetex: True
+font.family: serif
+font.size: 10
+
+# Use the SAME text/math font family as thesis.cls.
+# If you change the font packages in thesis.cls, change this line too.
+text.latex.preamble: \usepackage{newpxtext,newpxmath}
+
+# Axes
+axes.labelsize: 10
+axes.titlesize: 10
+axes.linewidth: 0.8
+
+# Ticks
+xtick.labelsize: 9
+ytick.labelsize: 9
+xtick.direction: in
+ytick.direction: in
+xtick.top: True
+ytick.right: True
+
+# Legend
+legend.fontsize: 9
+legend.frameon: False
+
+# Lines
+lines.linewidth: 1.4
+lines.markersize: 5
+
+# Output
+figure.dpi: 150
+savefig.dpi: 300
+savefig.bbox: tight
+savefig.pad_inches: 0.02
+
+# Layout
+figure.constrained_layout.use: True

@@ -1,0 +1,33 @@
+{
+    "latex-workshop.latex.outDir": "%DIR%/Build",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.synctex.afterBuild.enabled": true,
+
+    "latex-workshop.latex.tools": [
+        {
+            "name": "latexmk (LuaLaTeX)",
+            "command": "latexmk",
+            "args": [
+                "-lualatex",
+                "-synctex=1",
+                "-interaction=nonstopmode",
+                "-file-line-error",
+                "%DOC%"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "latexmk (LuaLaTeX)",
+            "tools": ["latexmk (LuaLaTeX)"]
+        }
+    ],
+
+    "editor.wordWrap": "on",
+    "editor.wordWrapColumn": 90,
+    "files.trimTrailingWhitespace": true,
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/Src"
+    ]
+}

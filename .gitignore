@@ -1,0 +1,28 @@
+# LaTeX build (all output goes to Build/ via latexmkrc)
+Build/
+
+# LaTeX auxiliary files (only appear in root if outdir is bypassed)
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.lof
+*.lot
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# VS Code local overrides (personal, not project settings)
+.vscode/*.local.json

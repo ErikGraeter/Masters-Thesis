@@ -1,0 +1,53 @@
+\documentclass{thesis}
+
+\input{metadata}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=ThesisBlue,
+    citecolor=ThesisBlue,
+    urlcolor=ThesisBlue
+}
+
+\begin{document}
+
+% -------------------------------------------------------
+% Front matter
+% -------------------------------------------------------
+\frontmatter
+
+\makethesistitle
+\input{Frontmatter/abstract}
+\input{Frontmatter/acknowledgements}
+
+\tableofcontents
+\listoffigures
+\listoftables
+
+% -------------------------------------------------------
+% Main matter
+% -------------------------------------------------------
+\mainmatter
+
+\input{Chapters/01_introduction}
+\input{Chapters/02_exoplanet_characterization}
+\input{Chapters/03_methodology}
+\input{Chapters/04_kepler_tess}
+\input{Chapters/05_plato_mission}
+\input{Chapters/06_setup_validation}
+\input{Chapters/07_results}
+\input{Chapters/08_discussion}how
+\input{Chapters/09_outlook}
+
+% -------------------------------------------------------
+% Appendix
+% -------------------------------------------------------
+\appendix
+\input{Appendices/appendix_a}
+
+% -------------------------------------------------------
+% Bibliography
+% -------------------------------------------------------
+\printbibliography
+
+\end{document}
