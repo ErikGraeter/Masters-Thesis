@@ -94,22 +94,27 @@ draws overlaid.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{schlecker_seed_variation}
-    \caption[Seed-variation robustness of the Schlecker+2024 fiducial on PLATO]{%
-        Distribution of recovered $S_\mathrm{thresh}$ across 100 independent
-        noise and population realisations of the \textcite{Schlecker2024}
-        fiducial model applied to \PLATO P4 (left), P5 (centre), and the
-        combined P4$+$P5 catalogue (right).  Each realisation draws a new
-        planet population and noise seed; the histogram shows the point of highest posterior density, $S_\mathrm{thresh}$, per trial and the Kernel Density Estimate (KDE), smooth curve over the histogram is overlaid. The
-        mean log-Bayes factor $\langle\ln\Delta Z\rangle \pm \sigma$ is
-        quoted in each panel title.  The combined sample is the most robust,
-        with $\ln\Delta Z > 4$ in each trial.}
-    \label{fig:schlecker_seed_variation_agni}
+    \includegraphics[width=\textwidth]{p4_p5_seed_variation}
+    \caption[Population-and-noise robustness of the HZIED baseline forecast]{%
+        Distribution of the recovered $S_\mathrm{thresh}$ posterior
+        mode across 50 independent population-and-noise realisations
+        for P4 (left, indigo), P5 (centre, red), and the combined
+        P4$+$P5 catalogue (right, teal).  Each seed regenerates the
+        full planet population from the Bioverse Generator as well as
+        the measurement noise, so the spread reflects combined
+        population and noise variance.  The smooth curve is a kernel
+        density estimate (KDE; a non-parametric Gaussian-smoothed
+        representation of the histogram).  The dashed vertical line
+        marks the injected threshold at $280\,\mathrm{W\,m^{-2}}$; the
+        dotted line marks the mean best-fit across the 50 runs.
+        All other pipeline parameters are identical to the baseline
+        run in \Cref{fig:p4_p5_baseline}.}
+    \label{fig:p4_p5_seed_variation}
 \end{figure}
 
 % Figure produced by:
-%   Src/figures/ch07_results.py --figure p4_p5_baseline
-%   → Figures/generated/p4_p5_baseline.pdf
+%   Src/figures/ch07_seed_variation.py
+%   → Figures/generated/p4_p5_seed_variation.pdf
 
 % §3.4 Baseline HZIED forecast removed; labels kept for cross-reference safety
 \phantomsection\label{sec:hzied_plato}
