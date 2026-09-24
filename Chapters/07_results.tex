@@ -73,7 +73,25 @@ draws overlaid.
 \section{Extending the steam model: from Turbet to AGNI}
 \label{sec:turbet_to_agni}
 
-% (write section body here)
+The \textcite{Turbet2020} tabulation used in \Cref{sec:reproduction} is
+restricted to planet masses $M \leq 2.05\,\Mearth$.  Above this ceiling
+no steam-atmosphere radius is assigned, so any hot-side planet heavier
+than $2.05\,\Mearth$ is silently dropped from the HZIED sample.
+\Cref{fig:steam_table_comparison} shows the effect explicitly: the Turbet
+grid (dashed) terminates at the dotted line, whereas the AGNI-updated
+table (solid) extends the same family of steam tracks smoothly to
+$5\,\Mearth$, recovering the additional inflated planets that would
+otherwise be excluded.  Both grids use the
+\textcite{DornLichtenberg2021} water-retention correction at the fiducial
+water-to-rock ratio $x_{\mathrm{H_2O}} = 0.005$.
+
+The kink visible in the Turbet curves below $\sim 0.4\,\Mearth$ reflects
+a numerical instability in the original grey-atmosphere model at very low
+masses; the AGNI grid, which only provides certified radii above
+$0.5\,\Mearth$, avoids this regime entirely.  For the \PLATO samples the
+practical mass range of interest is $M \in [0.5,\,5]\,\Mearth$, where
+the two prescriptions agree well at the overlap masses and AGNI extends
+the coverage by a factor of $\sim 2.5$ in mass.
 
 \begin{figure}[H]
     \centering
@@ -97,6 +115,16 @@ draws overlaid.
 
 % fig:turbet_vs_agni_mass removed; steam_table_comparison covers this comparison
 \phantomsection\label{fig:turbet_vs_agni_mass}
+
+\Cref{fig:p4_p5_baseline} shows the full \HZIED forecast for P4, P5, and
+the combined P4$+$P5 catalogue under the AGNI baseline.  Both samples
+recover a strong Bayes factor, and the step in the running mean of the
+observed radii at $S_\mathrm{thresh}$ is clearly resolved in both the
+M-dwarf and FGK panels.  \Cref{fig:p4_p5_seed_variation} further
+demonstrates that the result is robust: across 100 independent population
+and noise realisations the posterior peak remains tightly concentrated
+around the injected $S_\mathrm{thresh} = 280\,\mathrm{W\,m^{-2}}$
+in all three configurations.
 
 \begin{figure}[H]
     \centering
