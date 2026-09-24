@@ -1,34 +1,555 @@
 \chapter{The Current Transit Landscape: Kepler, K2, and TESS}
 \label{chap:kepler_tess}
 
-% (write section body here)
+This chapter sets the observational scene against which \PLATO's
+forecast (\Cref{chap:results}) must be read.
+\Cref{sec:transit_method} introduces the transit method and the
+precision it delivers on small-planet radii.
+\Cref{sec:small_planet_demographics} sketches the small-planet
+population as \Kepler{}, K2, and \TESS{} have revealed it.  The
+subsequent sections then ask what those surveys have actually
+delivered in the \HZIED test region --- the short answer being that
+they have not delivered anything usable: the current cold-side sample
+is so thin that the two-mean Bayes factor is formally undefined.
+Along the way I set out the archive sample, its selection biases,
+the empty habitable-zone slab, the composition information available,
+and the case for \PLATO.
 
-\section{Data source and sample}
-\label{sec:kt_data_source}
+The data, downloader, and exploratory notebook for the
+archive-specific parts of this chapter live in
+\texttt{HZIED/real\_data/}, deliberately kept separate from the
+Bioverse simulator used elsewhere in the thesis so that real-planet
+figures cannot leak into the forecast pipeline.
 
-% (write section body here)
 
+% =======================================================================
+\section{Transit method and RV follow-up}
+\label{sec:transit_method}
+
+The transit method is the observational technique that has defined
+modern exoplanet demographics and underpins every result in this
+thesis.  When a planet's orbit is aligned closely enough with our line
+of sight, the planet passes in front of its host star once per orbit,
+dimming the star's light by a fraction
+%
+\begin{equation}
+    \delta = \left(\frac{R_p}{R_\star}\right)^{\!2},
+    \label{eq:transit_depth}
+\end{equation}
+%
+for the duration of the transit
+\parencite{Seager2003,Winn2010}.  The transit depth $\delta$ is the
+most direct constraint on planet size available across the mass range
+accessible to current instruments: the measurement does not require
+the planet to be spatially resolved from its host, it scales
+favourably with photometric precision, and the same transit can be
+observed multiple times over a multi-year mission baseline to build
+up signal-to-noise.  The immediate observables --- the orbital period
+$P$ (from the interval between successive transits), the depth
+$\delta$, and the transit duration $\tau$ --- combined with a set of
+stellar parameters ($R_\star$, $M_\star$, and the limb-darkening
+coefficients) give the planet radius $R_p$ and the orbital semi-major
+axis $a$; the planet mass is inaccessible to transits alone and
+requires either radial-velocity follow-up or transit-timing variations
+from neighbouring planets in the same system.
+
+Two selection effects intrinsic to the geometry shape every
+transit-derived catalogue and both work against the observation of
+the \HZIED signature discussed in \Cref{sec:hzied_framework}.  First,
+the transit is only visible if the geometric alignment of the orbit
+places the planet in front of the star's disk.  For a circular orbit
+the probability of such an alignment is approximately $R_\star / a$,
+which for a Sun-like host and a habitable-zone orbit is
+${\sim}\,0.5\,\%$: long-period planets are geometrically disfavoured
+by the same factor by which they are astrophysically interesting.
+Second, credible detection requires a signal-to-noise ratio well
+above unity accumulated over the mission baseline.  For a stellar
+noise floor $\sigma_\mathrm{phot}$ per photometric measurement, the
+per-transit SNR scales as
+$\delta/(\sigma_\mathrm{phot}/\sqrt{n_\mathrm{cad}})$ where
+$n_\mathrm{cad}$ is the number of cadence measurements per transit,
+and the total mission SNR scales further as $\sqrt{N_\mathrm{tran}}$
+in the number of independent transits.  Small planets on long-period
+orbits are thus penalised twice: they present a small $\delta$ (a few
+tens of parts per million for an Earth-analog around a solar-type
+star) and they contribute only a few transits over any realistic
+mission baseline.  The rest of this chapter shows how deeply these
+two biases have shaped the current confirmed-planet catalogue, in
+which the median instellation sits roughly $400\times$ higher than
+the runaway-greenhouse threshold of \Cref{sec:habitable_zone}.
+
+The precision of the derived planet radius depends on $R_\star$ as
+much as on $\delta$ itself, and stellar characterisation is therefore
+intertwined with planet characterisation.  \PLATO is designed around
+this coupling (see \Cref{chap:plato_mission}): its four-year
+long-duration observation phase, combined with a target list of
+bright asteroseismic stars, propagates to per-planet radius precisions
+of a few percent --- the noise floor the \HZIED test requires
+\parencite{Schlecker2024}.  The comparable precision on the current
+\Kepler catalogue is typically a factor of two to five worse
+\parencite{Bryson2021} and dominates the uncertainty budget on
+individual small-planet properties as much as any other observational
+input.
+
+
+% =======================================================================
+\section{Small-Planet Demographics}
+\label{sec:small_planet_demographics}
+
+The starting point for any demographic test on transiting planets is
+the underlying occurrence-rate distribution --- what fraction of stars
+host what kinds of planets on what orbits.  Two decades of transit
+surveys have converged on a picture in which \emph{small} planets,
+defined loosely as $R_p \lesssim 4\,\Rearth$, are the numerically
+dominant class around dwarf stars of essentially every spectral type.
+The Kepler-based occurrence-rate analyses of \textcite{Fressin2013},
+\textcite{Kunimoto2020}, and \textcite{Bergsten2022} converge on total
+small-planet occurrences of order unity to a few per FGK dwarf at
+orbital periods below one hundred days; larger planets, hot Jupiters,
+and short-period gas giants are far less common and contribute little
+to the numerical count of habitable-zone-relevant systems.
+
+The small-planet population is itself structured.  \textcite{Fulton2017}
+first showed that the radius distribution below $4\,\Rearth$ is
+bimodal, with two peaks at ${\sim}\,1.3\,\Rearth$ (super-Earths) and
+${\sim}\,2.4\,\Rearth$ (sub-Neptunes) separated by a shallow valley
+at $R_p \approx 1.6$--$2.0\,\Rearth$: the ``Fulton gap'' or
+``radius valley''.  Two competing but not mutually exclusive theories
+predict a gap of exactly this shape and location.  The
+photoevaporation model of \textcite{OwenWu2017} argues that XUV
+irradiation from the young host star strips the H/He envelope from
+super-Earth cores, leaving a bare rocky planet below the gap and a
+residual envelope-bearing sub-Neptune above it; the core-powered
+mass-loss model of \textcite{GinzburgSchlichting2018} makes the same
+qualitative prediction from a different physical mechanism, in which
+the escape of the primordial envelope is powered by the residual heat
+of the cooling planet interior.  Both mechanisms operate on the
+${\sim}\,10^{7}$--$10^{8}\,\mathrm{yr}$ timescale of the
+pre-main-sequence phase, and their predicted gaps sit within a single
+$R_p$ resolution element of what \Kepler observed.  Distinguishing
+them requires late-stage measurements that \PLATO approaches but does
+not resolve.
+
+For the \HZIED test three quantities from the demographic literature
+matter most.  First, the occurrence-rate density of small planets in
+the classical habitable zone of solar-like hosts is
+$\eta_\oplus \sim 0.2$--$0.6$ per FGK dwarf
+\parencite{Bryson2021,Kunimoto2020}, high enough that a well-designed
+transit survey around bright FGK stars can accumulate a
+habitable-zone-slab sample of tens to hundreds of planets
+\parencite{Schlecker2024}.  Second, the mass--radius relationship of
+small planets is not deterministic.  \textcite{ChenKipping2017}
+showed that the population-averaged relation is probabilistic, with
+intrinsic scatter comparable to observational uncertainties, and this
+scatter has to be included in any statistical inference on planet
+size.  Third, and most importantly for this thesis, the M-dwarf
+sub-population appears to be systematically different from the FGK
+one.  \textcite{LuquePalle2022} argued from a sample of M-dwarf
+transit-plus-RV systems that the small-planet population around M
+dwarfs is bimodal in bulk density, with a rocky mode and a water-rich
+mode that dominate the demographic in a way not seen around FGK
+stars.  This claim was pushed back by \textcite{Rogers2023} and
+refined by \textcite{Rogers2024}, but the leading interpretation of
+the data still involves a substantial fraction of M-dwarf small
+planets carrying non-negligible water inventories --- of order
+percent to tens of percent by mass.
+
+The consequence for what follows is that the water inventory of small
+planets, treated as a single injection value
+$x_{\mathrm{H_2O}}=0.005$ in the original \textcite{Schlecker2024}
+framework, should be treated as a \emph{distribution} whose shape may
+depend on host spectral type.  \Cref{chap:methodology} adopts four
+alternative composition priors motivated by this literature, and
+\Cref{chap:results} tests the sensitivity of the \HZIED detection to
+each in turn.
+
+
+% =======================================================================
+% Sections 1.5.3–1.5.8 merged into one section for condensed version
+\section{Current survey limitations and the case for PLATO}
+\label{sec:kt_current_surveys}
+
+The current Kepler/K2/\TESS{} confirmed-planet archive ($N=4\,044$) is
+dominated by hot planets: the median instellation is $\sim 400\times$ the
+rocky runaway threshold $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$.
+Only eight confirmed planets in the entire archive sit below
+$S_\mathrm{thresh}$ at any radius, and only one survives the mildest
+\HZIED instellation cut used elsewhere in this thesis, making the
+two-mean Bayes factor formally undefined on real data today.  Both
+selection effects intrinsic to transit surveys (geometric transit
+probability $\propto R_\star/a$ and signal-to-noise
+$\propto\sqrt{N_\mathrm{tran}}$) work against the cold side.  The
+direct-mass sub-catalogue capable of constraining composition is three
+planets deep in the \HZIED window.  The case for \PLATO is therefore
+straightforward: its longer baseline, brighter target list, and
+FGK-dominated P5 sample are expected to quadruple the cold-side
+habitable-zone count and push the cold-to-hot ratio toward unity,
+providing the first sample large enough for the SMA-based inference
+developed in this thesis.
+
+%% Original sections kept for reference (commented out for condensed doc):
+%
+% \section{Data source and sample}
+\iffalse
+
+Every number in this chapter comes from the NASA Exoplanet Archive
+\parencite{Akeson2013}, specifically its `Planetary Systems Composite
+Parameters' (\texttt{pscomppars}) table pulled via the archive's TAP
+endpoint.  \texttt{pscomppars} carries one row per confirmed planet
+with the curators' best parameter set, gap-filling derived quantities
+like \texttt{pl\_insol} and \texttt{pl\_dens} where the source
+publication left them blank.  Its raw sibling \texttt{ps} keeps every
+published parameter set and is a poor choice for a demographic study:
+even after asking for one row per planet, only ${\sim}700$
+\Kepler{}+K2+\TESS{} entries carry both a radius and an instellation.
+
+Selecting every \Kepler-, K2-, or \TESS-discovered entry in
+\texttt{pscomppars} that has both a radius (\texttt{pl\_rade}) and an
+instellation (\texttt{pl\_insol}) returns $N_\mathrm{tot} = 4044$
+planets, distributed across the three surveys as
+
+\begin{center}
+\small
+\begin{tabular}{lc}
+    \toprule
+    Discovery facility & Planets \\
+    \midrule
+    \Kepler                                        & $2\,766$ \\
+    \TESS   & $\phantom{2\,}\,889$ \\
+    K2                                             & $\phantom{2\,}\,389$ \\
+    \midrule
+    Total                                          & $4\,044$ \\
+    \bottomrule
+\end{tabular}
+\end{center}
+
+For the composition discussion in \Cref{sec:kt_composition} the same
+query also returns the archive's best-mass estimate \texttt{pl\_bmasse}
+with its provenance flag \texttt{pl\_bmassprov} (either
+\texttt{'Mass'} for a direct measurement, \texttt{'M-R relationship'}
+for a radius-derived value, or \texttt{'Msini'} for a radial-velocity
+minimum mass), the bulk density \texttt{pl\_dens}, and the orbital
+eccentricity \texttt{pl\_orbeccen}.
+
+The downloader
+(\texttt{real\_data/scripts/download\_confirmed\_planets.py}) takes
+about three seconds and overwrites the local parquet each time, so
+every regeneration of the figures in this chapter reads a fresh
+archive snapshot.
+
+
+% =======================================================================
 \section{Sample overview and selection biases}
 \label{sec:kt_sample_overview}
 
-% (write section body here)
+Two selection effects shape the joint radius--instellation
+distribution of every transit survey, and both work against the
+\HZIED test.
 
+\paragraph{Short-period bias.}
+Detection efficiency falls with orbital period on two fronts: longer
+periods produce fewer transits inside a fixed mission baseline, and
+the geometric transit probability itself scales as $R_\star / a
+\propto S^{1/2}$.  Together they push the confirmed-planet sample
+toward high instellation: more than $80\,\%$ of the \Kepler{}+\TESS{}
+sample sits at $S_\mathrm{abs} > 1000\,\mathrm{W\,m^{-2}}$, while the
+rocky runaway threshold $S_\mathrm{thresh} = 280\,\mathrm{W\,m^{-2}}$
+--- the entire object of interest for this thesis --- sits far down
+the cold tail (\Cref{fig:kt_full_scatter}).
+
+\paragraph{The radius gap.}
+The small-planet radius distribution is bimodal around
+$R_p \approx 1.8\,\Rearth$, the well-studied Fulton gap
+\parencite{Fulton2017} usually read as the boundary between rocky
+super-Earths and volatile-rich sub-Neptunes.  The bimodality is
+clean in the \Kepler subsample; \TESS' brighter, all-sky target list
+selects preferentially for larger radii and the K2 sample sits in
+between.  The distinction matters because rocky planets are the
+physically-motivated \HZIED target: a sub-Neptune already carries a
+puffy envelope on either side of $S_\mathrm{thresh}$, so it
+contributes to the null-hypothesis plateau rather than to the step
+we are trying to detect.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{kt_full_sample_rs}
+    \caption[Kepler+K2+TESS confirmed planets on the $R_p$--$S_\mathrm{abs}$ plane]{%
+        All 4\,044 confirmed \Kepler, K2, and \TESS planets with both a
+        measured radius and a computed instellation.  Left: scatter by
+        discovery facility (\Kepler blue, K2 green, \TESS red).
+        Right: 2D hexbin density with a log colour scale.  Dashed lines
+        mark the rocky ($280\,\mathrm{W\,m^{-2}}$) and Hycean
+        ($435\,\mathrm{W\,m^{-2}}$) runaway thresholds and Earth's
+        instellation ($1361\,\mathrm{W\,m^{-2}}$).}
+    \label{fig:kt_full_scatter}
+\end{figure}
+
+\Cref{fig:kt_radius_gap} makes both effects visible: the \Kepler
+histogram (blue) shows the canonical dip at $R_p \approx
+1.6$--$2\,\Rearth$, while the \TESS histogram (red) sits systematically
+to its right, and the density plot on the right of
+\Cref{fig:kt_full_scatter} shows how sharply the population drops off
+below $S_\mathrm{abs}\sim 1000\,\mathrm{W\,m^{-2}}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{kt_radius_gap}
+    \caption[Radius histogram and the Fulton gap]{%
+        Radius distribution of the current transit sample.  Left:
+        linear-radius zoom on the small-planet regime
+        ($R_p\leq 5\,\Rearth$), shaded band marks the Fulton gap
+        $1.6$--$2\,\Rearth$.  Right: log-radius histogram covering the
+        full range up to gas giants.  The \Kepler sub-sample shows the
+        canonical bimodality across the Fulton gap; \TESS is skewed to
+        larger radii by its target-selection function.}
+    \label{fig:kt_radius_gap}
+\end{figure}
+
+
+% =======================================================================
 \section{The habitable-zone slab}
 \label{sec:kt_hz_zoom}
 
-% (write section body here)
+Zooming into the \HZIED-relevant window makes the shortage of
+cold-side planets concrete.  The median instellation of the whole
+$4\,044$-planet sample sits at $S_\mathrm{abs}\approx 1.2\times
+10^{5}\,\mathrm{W\,m^{-2}}$, roughly $400$ times the rocky runaway
+threshold.  Cutting to $R_p \leq 3\,\Rearth$ and
+$S_\mathrm{abs} \in [50,\,1500]\,\mathrm{W\,m^{-2}}$ --- generous
+by the standards of the rest of this thesis --- leaves $31$ planets,
+all of them on the hot side of $S_\mathrm{thresh}$.  If we go even
+wider and drop the radius cut altogether, only $8$ confirmed
+\Kepler+K2+\TESS{} planets in the entire archive sit below
+$280\,\mathrm{W\,m^{-2}}$; three of those are gas giants
+(\Cref{tab:kt_hz_summary}).
 
+\begin{center}
+\small
+\begin{tabular}{lcc}
+    \toprule
+    Constraint & $N_\mathrm{cold}$ & $N_\mathrm{hot}$ \\
+    \midrule
+    Full catalogue & $\phantom{0}\,8$ & $4\,036$ \\
+    Any $R_p$, $S \in [50,\,1500]$          & $\phantom{0}\,0$ & $\phantom{0}\,31$ \\
+    $R_p \leq 3\,\Rearth$, $S \in [50,\,1500]$ & $\phantom{0}\,0$ & $\phantom{0}\,31$ \\
+    $R_p \leq 4\,\Rearth$, $S \in [10,\,3000]$ & $\phantom{0}\,1$ & $\phantom{0}\,108$ \\
+    \bottomrule
+\end{tabular}
+\captionof{table}[Cold/hot split of confirmed planets across cuts]{%
+    Cold vs hot counts of \Kepler{}+K2+\TESS{} confirmed planets on
+    either side of the rocky runaway threshold
+    $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$, at successively
+    relaxed radius and instellation cuts.  The cold-side sample is
+    catastrophically thin: only \emph{one} planet (Kepler-1704~b,
+    R $\approx$ 1.9\,$\Rearth$) satisfies even the loosest cut used
+    elsewhere in this thesis, and none of the standard \HZIED windows
+    contain any cold planet at all.}
+\label{tab:kt_hz_summary}
+\end{center}
+
+\Cref{fig:kt_hz_slab} shows the same slab visually.
+
+\paragraph{The two-mean test cannot be run.}
+The two-aggregate Bayes factor of
+\Cref{ssec:hypothesis_test_methodology} needs at least a handful of
+planets on each side of $S_\mathrm{thresh}$ so that the per-side mean
+and its standard error are both defined.  At most one cold planet
+survives any of the \HZIED windows we might reasonably choose, so
+the test has no data to work on and cannot return a $\ln\Delta Z$.
+That is not the same as a weak or inconclusive result: the
+observation is that the current sample carries no HZ inner-edge
+information at all.  \PLATO changes this by more than an order of
+magnitude, as \Cref{sec:kt_platos_role} shows.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{kt_hz_slab}
+    \caption[HZ-slab scatter for the current transit sample]{%
+        Habitable-zone slab ($S\in[50,\,1500]\,\mathrm{W\,m^{-2}}$,
+        $R_p\leq 3\,\Rearth$; $N=31$).  Points coloured by discovery
+        facility; the cold side ($S \leq 280\,\mathrm{W\,m^{-2}}$) is
+        \emph{empty}, so the cold/hot mean-band overlay that this figure
+        template supports is suppressed and replaced with the annotation
+        that the two-mean test is undefined.  Compare with the P4/P5
+        forecast populations in \Cref{fig:kt_plato_overlay}.}
+    \label{fig:kt_hz_slab}
+\end{figure}
+
+
+% =======================================================================
 \section{Composition hints}
 \label{sec:kt_composition}
 
-% (write section body here)
+The archive has no explicit `composition' column, but a few of the
+fields it does carry can be turned into composition proxies with more
+or less care.  \Cref{tab:kt_composition_coverage} summarises the
+options and their coverage.
 
+\begin{center}
+\small
+\begin{tabular}{lll}
+    \toprule
+    Column & Coverage & Notes \\
+    \midrule
+    \texttt{pl\_rade}    & $4\,044\,/\,4\,044$ & direct from the transit \\
+    \texttt{pl\_masse}   & $1\,239\,/\,4\,044$ & directly measured (TTV or RV) \\
+    \texttt{pl\_bmasse}  & $4\,020\,/\,4\,044$ & `best' mass; may be inferred \\
+    \texttt{pl\_bmassprov} & $4\,020\,/\,4\,044$ & provenance flag (see below) \\
+    \texttt{pl\_dens}    & $3\,960\,/\,4\,044$ & bulk density, g\,cm$^{-3}$ \\
+    \texttt{pl\_orbeccen} & $3\,628\,/\,4\,044$ & orbital eccentricity \\
+    \bottomrule
+\end{tabular}
+\captionof{table}[Composition-relevant columns and their coverage]{%
+    Archive columns useful for composition inference and their coverage
+    on the Kepler+K2+TESS sample.  The \texttt{pl\_bmassprov} field is
+    critical: for $2\,767$ planets the `best' mass is inferred from a
+    mass--radius relationship and is therefore circular for
+    composition inference; only the $1\,239$ direct-mass planets carry
+    true information.}
+\label{tab:kt_composition_coverage}
+\end{center}
+
+The three composition proxies, in order of coverage but reverse
+order of trustworthiness, are the following.
+
+The coarsest is radius alone.  Every planet in the catalogue has
+one, and the community convention
+\parencite{Fulton2017,ChenKipping2017} sorts them into five bins:
+rocky ($R<1.6\,\Rearth$), the Fulton-gap transition
+($1.6\,\Rearth\leq R<2\,\Rearth$), sub-Neptune
+($2\,\Rearth\leq R<4\,\Rearth$), Neptunian
+($4\,\Rearth\leq R<10\,\Rearth$), and gas giant
+($R\geq 10\,\Rearth$).  This is complete but crude --- a
+$1.5\,\Rearth$ planet is not automatically rocky.
+
+Bulk density adds a bit more information, at least in principle:
+iron-enriched at $\rho > 6\,\mathrm{g\,cm^{-3}}$, Earth-like at
+$4$--$6$, water-rich or thin-envelope at $2$--$4$,
+volatile-dominated below $2$.  The archive has densities for $3\,960$
+planets, but $2\,767$ of those are computed from a mass that was
+itself inferred from a mass--radius relationship.  Using such a
+density to constrain composition is circular; only the direct-mass
+subset gives an honest answer.
+
+That direct-mass subset --- planets with
+$\texttt{pl\_bmassprov} = \texttt{'Mass'}$, $1\,239$ objects --- is
+the gold standard.  With both $M$ and $R$ measured, the mass--radius
+diagram is unambiguous, and any planet lying above the pure-water
+track of \textcite{Zeng2016,Zeng2019} \emph{must} carry an H/He or
+steam envelope simply because water alone cannot make the observed
+radius at the observed mass.  Once restricted to the HZ-slab of
+\Cref{sec:kt_hz_zoom} the direct-mass sample drops to three planets,
+which does not support any statistical statement.  The \HZIED
+composition question is genuinely open today, and the ground-based
+radial-velocity follow-up around \PLATO's targets is what will
+change that.
+
+\Cref{fig:kt_composition_classes} shows the radius classes projected
+onto the $R_p$--$S_\mathrm{abs}$ plane; \Cref{fig:kt_composition_mr}
+shows the direct-mass mass--radius diagram with the Zeng composition
+tracks overlaid.  Both make the same point graphically: the region
+where a rocky, cold-side, well-characterised planet would live is
+empty.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{kt_composition_classes}
+    \caption[Radius-based composition class of the current sample]{%
+        Left: number of confirmed \Kepler+K2+\TESS planets in each of
+        the five radius-derived composition classes.  Right: the same
+        classes overlaid on the $R_p$--$S_\mathrm{abs}$ plane, with the
+        rocky and Hycean $S_\mathrm{thresh}$ marks retained for
+        orientation.  Rocky planets ($R_p<1.6\,\Rearth$) are strongly
+        concentrated at very high instellation; the \HZIED-relevant
+        cold-side region is empty.}
+    \label{fig:kt_composition_classes}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{kt_composition_mr}
+    \caption[Mass--radius diagram of the direct-mass subset]{%
+        Direct-mass subset ($\texttt{pl\_bmassprov}=\texttt{'Mass'}$;
+        $N=1\,239$).  Left: mass--radius diagram with the Zeng+2016
+        Earth-like rocky curve, the Zeng+2019 pure-water curve, and a
+        rough H/He-envelope reference.  Points are flagged as at or
+        below the water curve (blue; may be rocky) versus above it
+        (red; must carry an H/He or steam envelope).  Right: the same
+        flag projected onto the $R_p$--$S_\mathrm{abs}$ plane.}
+    \label{fig:kt_composition_mr}
+\end{figure}
+
+
+% =======================================================================
 \section{What PLATO adds}
 \label{sec:kt_platos_role}
 
-% (write section body here)
+Putting the current sample and the \PLATO forecast on the same axes
+makes the mission's case in one figure.  The confirmed catalogue is
+thin exactly where the \HZIED test needs planets --- small radii,
+$S_\mathrm{abs}$ of a few hundred W\,m$^{-2}$ --- because those
+planets have long periods and produce only a handful of transits over
+the missions' baselines.  Longer duration, better photometric
+precision, and the FGK-dominated P5 target list are what \PLATO
+brings, and \Cref{fig:kt_plato_overlay} shows what that combination
+buys us: even the two-year nominal campaign roughly quadruples the
+HZ-slab count and, crucially, pushes the cold-to-hot ratio close to
+unity.  Both are prerequisites for the SMA-based inference developed
+in the rest of this thesis.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{kt_plato_overlay}
+    \caption[Real vs \PLATO-forecast populations on the $R_p$--$S_\mathrm{abs}$ plane]{%
+        Real \Kepler+K2+\TESS confirmed planets (grey) overlaid with
+        the simulated \PLATO P4 (M-dwarf, blue) and P5 (FGK, red)
+        detectable populations from
+        \Cref{sec:hzied_plato}, using the fiducial
+        \texttt{agni\_updated}, $x_{\mathrm{H_2O}}=0.005$,
+        depth $\geq 60\,\mathrm{ppm}$ configuration.  P4 contributes
+        $139$ planets, P5 contributes $266$; both populations sit
+        squarely in the currently sparse
+        $S_\mathrm{abs}\lesssim 500\,\mathrm{W\,m^{-2}}$ region where
+        the \HZIED signature must be measured.}
+    \label{fig:kt_plato_overlay}
+\end{figure}
+
+
+% =======================================================================
 \section{Chapter summary}
 \label{sec:kt_summary}
 
-% (write section body here)
+The transiting-planet catalogue we have today is a hot-planet
+catalogue.  Out of $4\,044$ confirmed \Kepler+K2+\TESS{} planets with
+both a radius and an instellation, eight sit below
+$S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$ at any radius, and only
+one survives even the mildest \HZIED cut this thesis uses.  The
+simplest diagnostic Bayes factor
+(\Cref{ssec:hypothesis_test_methodology}) is undefined on the
+sample, and the direct-mass sub-catalogue that could speak to
+composition is three planets deep.  These are not gaps to be squeezed
+against the priors of a clever inference --- they are why the \HZIED
+test has never been tried on real data.  The rest of the thesis
+turns to what \PLATO will observe and asks how much of that missing
+cold-side sample the step-and-stare campaigns are forecast to
+deliver.
+\fi
+%% End of commented-out original sections
+
+% Figures produced by:
+%   Src/figures/kt_full_sample_rs.py
+%     → Figures/generated/kt_full_sample_rs.pdf
+%   Src/figures/kt_radius_gap.py
+%     → Figures/generated/kt_radius_gap.pdf
+%   Src/figures/kt_hz_slab.py
+%     → Figures/generated/kt_hz_slab.pdf
+%   Src/figures/kt_composition_classes.py
+%     → Figures/generated/kt_composition_classes.pdf
+%   Src/figures/kt_composition_mr.py
+%     → Figures/generated/kt_composition_mr.pdf
+%   Src/figures/kt_plato_overlay.py
+%     → Figures/generated/kt_plato_overlay.pdf
+%
+% Data source:
+%   HZIED/real_data/data/kepler_tess_confirmed.parquet
+%   (regenerate with HZIED/real_data/scripts/download_confirmed_planets.py)

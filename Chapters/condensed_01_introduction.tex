@@ -1,0 +1,32 @@
+% ============================================================
+% Chapter 1 — Introduction
+% Combines: 01_introduction + 02_exoplanet_characterization
+%           + 04_kepler_tess (as context sections)
+% ============================================================
+
+% --- Ch01: Introduction (already chapter-level, include directly) ---
+\input{Chapters/01_introduction}
+
+% --- Ch02: HZ physics and HZIED test (demote chapter→section) ---
+\let\savedchapterB\chapter
+\let\savedsectionB\section
+\let\savedsubsectionB\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/02_exoplanet_characterization}
+\let\chapter\savedchapterB
+\let\section\savedsectionB
+\let\subsection\savedsubsectionB
+
+% --- Ch04: Kepler/TESS observational context (demote chapter→section) ---
+\let\savedchapterD\chapter
+\let\savedsectionD\section
+\let\savedsubsectionD\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/04_kepler_tess}
+\let\chapter\savedchapterD
+\let\section\savedsectionD
+\let\subsection\savedsubsectionD

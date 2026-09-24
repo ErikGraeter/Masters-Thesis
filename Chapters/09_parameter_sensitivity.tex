@@ -1,0 +1,494 @@
+\chapter{Sensitivity to composition, mass, and injection parameters}
+\label{chap:parameter_sensitivity}
+
+With the physical steam model varied in \Cref{chap:steam_sensitivity},
+this chapter turns to the remaining physical assumptions that are hard
+to pin down independently: the planetary water inventory, the mass
+range over which the analysis is applied, the runaway-greenhouse
+fraction $f_\mathrm{rgh}$, the runaway threshold
+$S_\mathrm{thresh}$, and the radius-measurement precision
+$\sigma_R$.  Each is varied in turn while all other parameters remain
+at the AGNI baseline of \Cref{chap:results}.  Figures in this chapter
+are produced by \texttt{Src/figures/ch09\_parameter\_sensitivity.py}.
+
+
+\section{Dependence on Planetary Water Content}
+\label{sec:composition_dependence}
+
+The amplitude of the injected radius inflation depends non-linearly on the
+water mass fraction $x_{\mathrm{H_2O}}$.  This section isolates the
+composition dependence at fixed steam prescription
+(\texttt{agni\_updated}), moving from the fiducial value used by
+\textcite{Schlecker2024} through a controlled sweep in
+$x_{\mathrm{H_2O}}$ and into the water-rich regime accessible only to the
+Aguichine and Pierrehumbert prescriptions.
+
+
+\subsection{Fiducial water-to-rock ratio}
+\label{ssec:wrr_fiducial}
+
+% TODO --- scientific question:
+%   Reference result: Δln Z when every planet is assigned x_H2O = 0.005,
+%   the Schlecker+2024 fiducial value (about Earth's total water content).
+% TODO --- plots / tables:
+%   Not a new figure; refer back to the fiducial P4/P5 result from
+%   \Cref{sec:hzied_plato} and quote its number here as the anchor for
+%   the sweep in the next subsection.
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(wrr=0.005, radius_inflation='agni_updated', ...)
+
+
+\subsection{Variation of the water-to-rock ratio}
+\label{ssec:wrr_sweep}
+
+Holding the steam prescription (\texttt{agni\_updated}), the runaway-greenhouse
+threshold ($S_\mathrm{thresh} = 280\,\mathrm{W\,m^{-2}}$), and the runaway fraction
+($f_\mathrm{rgh} = 0.8$) fixed, we sweep the injected water-to-rock ratio
+$x_{\mathrm{H_2O}}$ over every value supported by the AGNI+PALEOS ratio-method
+steam table.  All remaining pipeline parameters are held at the P4/P5 baseline
+configuration summarised in \Cref{tab:wrr_sweep_params}.
+
+\begin{table}[H]
+    \centering
+    \caption[Fixed parameters of the $x_\mathrm{H_2O}$ sweep]{%
+        Fixed configuration of the \texttt{agni\_updated} $x_\mathrm{H_2O}$
+        sweep.  The only quantity varied across the sweep is
+        $x_\mathrm{H_2O}$; every other parameter matches the P4/P5 baseline
+        (\Cref{sec:hzied_plato}).}
+    \label{tab:wrr_sweep_params}
+    \small
+    \begin{tabular}{lll}
+        \toprule
+        Parameter & Value & Note \\
+        \midrule
+        \multicolumn{3}{l}{\textit{Injection / model}} \\
+        \texttt{radius\_inflation} & \texttt{agni\_updated} & AGNI+PALEOS steam table, ratio method \\
+        \texttt{use\_dl21}         & \texttt{True}          & Dorn \& Lichtenberg (2021) water-incorporation \\
+        $S_\mathrm{thresh}$        & $280\,\mathrm{W\,m^{-2}}$ & rocky HZ inner edge \\
+        $f_\mathrm{rgh}$           & $0.8$                  & runaway greenhouse fraction \\
+        \multicolumn{3}{l}{\textit{Observable cuts}} \\
+        $M$                        & $[0.5,\,20]\,\Mearth$  & \texttt{agni\_updated} certified range \\
+        depth                      & $\geq 60\,\mathrm{ppm}$ & relaxed cut (see \Cref{ssec:relaxed_depth}) \\
+        \texttt{age\_mode}         & \texttt{sampled}       & Gaia FLAME + bootstrap fill \\
+        \multicolumn{3}{l}{\textit{Inference}} \\
+        window $w$                 & $25$                   & rolling SMA \\
+        $\sigma_R / R$             & $4\%$ (P4), $3\%$ (P5) & PLATO Red Book \\
+        $\sigma_S / S$             & $5\%$                  & Schlecker et al.\ (2024) \\
+        \texttt{sma\_x\_mode}      & \texttt{standard}      & SMA-mean $S$ per window \\
+        \texttt{sigma\_sma\_mode}  & \texttt{empirical}     & $\mathrm{std}(R_\mathrm{obs})/\sqrt{w}$ \\
+        \texttt{nlive}             & $100$                  & dynesty live points \\
+        seed base                  & $42$                   & 10 trials per grid point (seeds $42 + 13\,i$, $i=0\ldots9$) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\Cref{fig:plato_wrr_sweep_lnk} shows the resulting Bayes factor $\ln\Delta Z$
+as a function of $x_{\mathrm{H_2O}}$ for the two PLATO samples.  Each point
+is the median across 10 independent noise realisations, and the shaded band
+gives the 16--84\,\% inter-percentile range; the width of the band therefore
+captures the combined jitter from measurement-noise draws and dynesty runs
+at $n_\mathrm{live}=100$.  In practice the scatter is substantial: the full
+range across 10 seeds spans ${\approx}\,20\text{--}30\,\ln\Delta Z$ units
+on both samples, comparable to the systematic gain of moving from the
+fiducial to the wettest grid value.  Any single-seed reading is therefore
+best interpreted as one draw from this distribution rather than as a
+definitive number.
+
+Above the noise band, the trend is unambiguous: on both samples the median
+evidence rises monotonically once $x_{\mathrm{H_2O}} \gtrsim 5\times10^{-3}$,
+because the per-planet radius increment $\Delta R(x_{\mathrm{H_2O}})$
+tabulated in the AGNI grid is roughly log-linear in $x_{\mathrm{H_2O}}$
+up to the wet limit of the ratio method; a larger step relative to
+$\sigma_R = 4\%$ (P4) or $3\%$ (P5) translates directly into a larger
+Bayes factor at fixed planet count.  On P4 the median climbs from
+$\ln\Delta Z \approx 49$ at the fiducial to ${\approx}\,93$ at
+$4\times10^{-2}$; on P5 from ${\approx}\,18$ to ${\approx}\,49$ over the
+same range.  The absolute gain is comparable on the two samples, but the
+fractional gain is smaller on P5 because its larger sample already
+saturates the information content of the fiducial step.
+
+Below the fiducial value, the near-identical medians on both P4
+($49.0$ at $10^{-4}$ vs $49.2$ at $5\times10^{-3}$) and P5 ($17.1$ vs
+$18.4$) imply that, at the noise level of PLATO's observable samples,
+the HZIED test is essentially insensitive to $x_{\mathrm{H_2O}}$ for any
+Earth-like or drier composition: all such scenarios produce the same
+statistically decisive discontinuity within the seed-to-seed scatter.
+Only strongly water-enriched scenarios
+($x_{\mathrm{H_2O}} \gtrsim 2\times10^{-2}$) leave a distinguishable
+imprint on the Bayes factor once the noise band is accounted for.
+
+\paragraph{Recovery of $S_\mathrm{thresh}$.}
+The right panel of \Cref{fig:plato_wrr_sweep_lnk} shows how the
+posterior-median $\hat{S}_\mathrm{thresh}$ recovered by dynesty tracks the
+$\ln\Delta Z$ trend on the left.  At $x_{\mathrm{H_2O}} = 10^{-4}$ the
+recovered value undershoots the injected $280\,\mathrm{W\,m^{-2}}$ by
+${\approx}\,35\,\mathrm{W\,m^{-2}}$ on P4 ($\hat{S}_\mathrm{thresh}=246$)
+and by ${\approx}\,23\,\mathrm{W\,m^{-2}}$ on P5 ($\hat{S}_\mathrm{thresh}=257$),
+because the tiny radius step at that water content is not well localised
+in $S$ and the posterior is pulled toward denser hot-side data at lower
+$S_\mathrm{thresh}$.  As $x_{\mathrm{H_2O}}$ grows the discontinuity
+sharpens and the recovery migrates back toward the injected value,
+reaching $264$ (P4) and $272$ (P5) at $4\times10^{-2}$.  The convergence
+of both $\hat{S}_\mathrm{thresh}$ and $\ln\Delta Z$ toward their
+large-$x_{\mathrm{H_2O}}$ asymptotes is the same physical statement:
+a larger radius step is both easier to detect (higher $\ln\Delta Z$)
+and easier to localise (better $\hat{S}_\mathrm{thresh}$ recovery).
+The seed-to-seed uncertainty on $\hat{S}_\mathrm{thresh}$ is
+${\approx}\,20\,\mathrm{W\,m^{-2}}$ (16--84\,\%) across the grid,
+smaller on P5 where the larger planet count reduces the posterior width.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_wrr_sweep_lnk}
+    \caption[$\ln\Delta Z$ and recovered $S_\mathrm{thresh}$ vs $x_\mathrm{H_2O}$]{%
+        Left: Bayes factor $\ln\Delta Z$ as a function of the injected
+        water-to-rock ratio $x_\mathrm{H_2O}$ for P4 (blue) and P5 (red).
+        Right: the corresponding posterior-median of the recovered
+        HZ-inner-edge threshold $\hat{S}_\mathrm{thresh}$; the dotted
+        horizontal line is the injected value $280\,\mathrm{W\,m^{-2}}$.
+        In both panels each marker is the median of 10 independent noise
+        realisations, and the shaded band spans the 16th--84th percentile
+        of those 10 draws.  All other pipeline parameters are as listed
+        in \Cref{tab:wrr_sweep_params}; the dashed vertical line marks the
+        Schlecker et al.\ (2024) fiducial $x_\mathrm{H_2O} = 5\times10^{-3}$.
+        The recovered $\hat{S}_\mathrm{thresh}$ systematically undershoots
+        the injected value at small $x_\mathrm{H_2O}$ and converges toward it
+        as the radius step grows, tracking the same trend as $\ln\Delta Z$.}
+    \label{fig:plato_wrr_sweep_lnk}
+\end{figure}
+
+\Cref{fig:plato_wrr_sweep_panels} shows the detected planet population for the
+two extremes of the grid and the fiducial value.  The vertical grey lines
+mark the steam-atmosphere inflation applied per planet: they lengthen
+visibly from $x_\mathrm{H_2O}=10^{-4}$ (nearly imperceptible) through the
+fiducial $5\times10^{-3}$ to $4\times10^{-2}$, where the hot-side
+inflation grows to $\gtrsim 0.15\,\Rearth$ per planet and produces a
+clearly visible discontinuity at $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_wrr_sweep_panels}
+    \caption[Detected planet sample for key $x_\mathrm{H_2O}$ values]{%
+        Detected planet sample for P4 (top row) and P5 (bottom row) at
+        $x_\mathrm{H_2O} \in \{10^{-4},\,5\times10^{-3},\,4\times10^{-2}\}$
+        (left to right).  Vertical grey lines connect each inflated planet's
+        pre-inflation radius to its observed radius, illustrating how the
+        steam-atmosphere increment grows with $x_\mathrm{H_2O}$.  The
+        recovered $\ln\Delta Z$ is annotated in each panel title.  All other
+        parameters as in \Cref{tab:wrr_sweep_params}.}
+    \label{fig:plato_wrr_sweep_panels}
+\end{figure}
+
+% Figures produced by:
+%   Src/figures/plato_wrr_sweep.py
+%     → Figures/generated/plato_wrr_sweep_lnk.pdf
+%     → Figures/generated/plato_wrr_sweep_panels.pdf
+
+
+\subsection{Water-rich compositions}
+\label{ssec:water_rich}
+
+% TODO --- scientific question:
+%   In the water-rich regime accessible only to the Aguichine and
+%   Pierrehumbert prescriptions, does the discontinuity strengthen,
+%   weaken, or fundamentally change shape?
+% TODO --- plots / tables:
+%   Δln Z as a function of x_H2O (or WMF) in the range 0.05 -- 0.5, using
+%   radius_inflation='aguichine'. Comparison plot juxtaposing the Aguichine
+%   result at WMF = 0.5 with the Pierrehumbert Hycean case.
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(wrr=<large>, radius_inflation='aguichine', ...)
+%   run_hzied_analysis(radius_inflation='hycean_pierrehumbert', ...)
+
+
+% =======================================================================
+\section{Dependence on Planet Mass and Applicability Limits}
+\label{sec:mass_dependence}
+
+The steam-atmosphere prescriptions differ substantially in the planet
+mass range over which they are certified.  This section separates two
+distinct effects: (i) a \emph{physical} change in the recovered
+$\Delta \ln Z$ due to the mass dependence of the radius inflation itself,
+and (ii) a \emph{sample-selection} change due to the observable mass cut
+$M_p \in [M_{\min}, M_{\max}]$ that must accompany each prescription.
+
+% TODO --- scientific question:
+%   How much of the model-to-model spread in Δln Z shown in
+%   \Cref{sec:steam_model} is driven by the physics of inflation as a
+%   function of planet mass, versus by the differing observable mass
+%   ranges enforced by the certified grid limits of each prescription?
+%
+% TODO --- plots / tables:
+%   (i)  ΔR(M) at fixed water mass fraction for each prescription,
+%        showing the mass range and the shape of the inflation curve.
+%   (ii) Δln Z on P4 as the upper mass cut M_max is varied
+%        (e.g. 2, 3, 5, 10, 20 M_earth) within a single prescription
+%        (agni_updated). Highlights the sample-selection effect at fixed
+%        physics.
+%   (iii) Table: N_planets and Δln Z for each (prescription, M_max)
+%        combination, distinguishing the sample-selection effect from the
+%        physical-inflation effect.
+%
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(sample='P4', radius_inflation='agni_updated',
+%                      M_min=0.5, M_max=<value>, ...)
+
+
+% =======================================================================
+\section{Other Key Model Parameters}
+\label{sec:other_parameters}
+
+The remaining model parameters that control the injected signal are
+grouped into physically interpretable blocks.  Each is isolated by
+holding the other axes at their fiducial values.
+
+
+\subsection{Runaway fraction \texorpdfstring{$f_{\mathrm{rgh}}$}{f\_rgh}}
+\label{ssec:f_rgh}
+
+The runaway-greenhouse fraction $f_\mathrm{rgh}$ absorbs the population's
+unknown steam-atmosphere lifetime: it is the fraction of hot-side
+planets ($S_\mathrm{abs} > S_\mathrm{thresh}$) that are currently in an
+inflated runaway state.  Physically, $f_\mathrm{rgh}$ interpolates
+between the two extreme scenarios that H1 and H0 encode: at
+$f_\mathrm{rgh}=0$ no hot-side planet is inflated and the H1 step
+degenerates to the flat H0 model (so $\ln\Delta Z$ collapses to sampler
+noise around zero); at $f_\mathrm{rgh}=1$ every hot-side planet is
+inflated and the injected step reaches its maximum amplitude
+$\Delta R = f_{dR}(x_{\mathrm{H_2O}})$.  For intermediate values the
+average injected step scales linearly, $\Delta R_\mathrm{eff}
+= f_\mathrm{rgh} \cdot f_{dR}(x_{\mathrm{H_2O}})$, so the expected
+scaling of the Bayes factor is $\ln\Delta Z \propto f_\mathrm{rgh}^2$
+at fixed noise (since evidence for a Gaussian mean shift scales with
+the squared amplitude relative to the error).
+
+We sweep $f_\mathrm{rgh} \in \{0.2,\,0.4,\,0.6,\,0.8,\,1.0\}$ at the
+otherwise-fiducial \texttt{agni\_updated} configuration
+(\Cref{tab:frgh_sweep_params}); $f_\mathrm{rgh}=0$ is omitted from the
+grid because it degenerates H1 into H0 and contributes only sampler
+noise, which would compress the plot without adding information.  The
+Schlecker et al.\ (2024) fiducial value is $0.8$.
+
+\begin{table}[H]
+    \centering
+    \caption[Fixed parameters of the $f_\mathrm{rgh}$ sweep]{%
+        Fixed configuration of the \texttt{agni\_updated} $f_\mathrm{rgh}$
+        sweep.  Only $f_\mathrm{rgh}$ varies across the grid; every other
+        parameter matches the P4/P5 baseline used in
+        \Cref{ssec:wrr_sweep}.}
+    \label{tab:frgh_sweep_params}
+    \small
+    \begin{tabular}{lll}
+        \toprule
+        Parameter & Value & Note \\
+        \midrule
+        \multicolumn{3}{l}{\textit{Injection / model}} \\
+        \texttt{radius\_inflation} & \texttt{agni\_updated} & AGNI+PALEOS steam table \\
+        \texttt{use\_dl21}         & \texttt{True}          & Dorn \& Lichtenberg (2021) water incorporation \\
+        $x_\mathrm{H_2O}$          & $0.005$                & Schlecker+2024 fiducial \\
+        $S_\mathrm{thresh}$        & $280\,\mathrm{W\,m^{-2}}$ & rocky HZ inner edge \\
+        \multicolumn{3}{l}{\textit{Observable cuts}} \\
+        $M$                        & $[0.5,\,20]\,\Mearth$  & \texttt{agni\_updated} certified range \\
+        depth                      & $\geq 60\,\mathrm{ppm}$ & relaxed cut (\Cref{ssec:relaxed_depth}) \\
+        \texttt{age\_mode}         & \texttt{sampled}       & FLAME + bootstrap fill \\
+        \multicolumn{3}{l}{\textit{Inference}} \\
+        window $w$                 & $25$                   & rolling SMA \\
+        $\sigma_R / R$             & $4\%$ (P4), $3\%$ (P5) & PLATO Red Book \\
+        $\sigma_S / S$             & $5\%$                  & Schlecker+2024 \\
+        \texttt{sma\_x\_mode}      & \texttt{standard}      & mean $S$ per window \\
+        \texttt{sigma\_sma\_mode}  & \texttt{empirical}     & $\mathrm{std}(R_\mathrm{obs})/\sqrt{w}$ \\
+        \texttt{nlive}             & $100$                  & dynesty live points \\
+        seed base                  & $42 + 200\,i$ ($i=0..4$) & unique per grid point; 10 trials each ($+13k$, $k=0..9$) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\Cref{fig:plato_frgh_sweep_lnk} shows the recovered $\ln\Delta Z$
+(left) and posterior-median $\hat{S}_\mathrm{thresh}$ (right) as
+functions of $f_\mathrm{rgh}$ for the two PLATO samples.  Each marker
+is the median across $10$ independent noise realisations; the shaded
+band is the $16$--$84\,\%$ range, capturing measurement-noise scatter
+plus dynesty variance at $n_\mathrm{live}=100$ (same construction as
+\Cref{ssec:wrr_sweep}).  The multi-seed medians are collected in
+\Cref{tab:frgh_sweep_results}.
+
+\begin{table}[H]
+    \centering
+    \caption[Multi-seed medians of the $f_\mathrm{rgh}$ sweep]{%
+        Multi-seed medians of the $f_\mathrm{rgh}$ sweep.  $\ln\Delta Z$
+        columns quote the median across $10$ noise realisations with the
+        per-seed min/max bracket; $\hat{S}_\mathrm{th}$ columns are the
+        median of the posterior-median values across the same $10$ draws
+        (W\,m$^{-2}$).  The injected threshold is $280\,\mathrm{W\,m^{-2}}$.
+        Planet counts are $N_\mathrm{P4}=139$ and $N_\mathrm{P5}=266$
+        across the grid (independent of $f_\mathrm{rgh}$).}
+    \label{tab:frgh_sweep_results}
+    \small
+    \begin{tabular}{lcccc}
+        \toprule
+        $f_\mathrm{rgh}$ & P4 $\ln\Delta Z$ (med [min,max]) & P4 $\hat{S}_\mathrm{th}$
+                         & P5 $\ln\Delta Z$ (med [min,max]) & P5 $\hat{S}_\mathrm{th}$ \\
+        \midrule
+        $0.20$ & $29.2\;[20.4,\,36.9]$ & $229$ & $14.9\;[\phantom{0}8.4,\,20.0]$ & $259$ \\
+        $0.40$ & $33.3\;[24.8,\,45.2]$ & $238$ & $15.4\;[11.1,\,26.4]$           & $264$ \\
+        $0.60$ & $39.4\;[25.0,\,49.0]$ & $229$ & $17.6\;[13.0,\,23.4]$           & $260$ \\
+        $0.80$ & $39.0\;[32.5,\,50.6]$ & $248$ & $17.8\;[16.0,\,21.9]$           & $261$ \\
+        $1.00$ & $50.5\;[42.1,\,76.5]$ & $243$ & $21.7\;[14.2,\,28.7]$           & $262$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Three concrete observations emerge:
+
+\begin{enumerate}
+    \item \textbf{$\ln\Delta Z$ grows sub-quadratically with
+    $f_\mathrm{rgh}$.}  The naive expectation for a Gaussian mean shift
+    scaling with the squared step amplitude,
+    $\ln\Delta Z \propto f_\mathrm{rgh}^2$, would predict a factor
+    ${\sim}25$ between $f_\mathrm{rgh}=0.2$ and $f_\mathrm{rgh}=1.0$.
+    The observed medians grow only by a factor of ${\sim}1.7$--$1.9$
+    (P4: $29\to 51$; P5: $15\to 22$).  Two reasons: (i) the SMA
+    likelihood is not a pure two-mean test --- it operates on a
+    rolling window and therefore integrates the step over several
+    S bins, so the effective SNR grows more slowly than the raw step
+    amplitude; (ii) even at $f_\mathrm{rgh}=0.2$ the hot side already
+    contains enough inflated planets to be statistically distinct from
+    the cold side, so the transition from "detectable" to "decisive"
+    is already made at modest fractions.
+    \item \textbf{Recovered $\hat{S}_\mathrm{thresh}$ is essentially
+    flat in $f_\mathrm{rgh}$.}  On P4 it stays at
+    $229$--$248\,\mathrm{W\,m^{-2}}$ across the grid, and on P5 at
+    $259$--$264\,\mathrm{W\,m^{-2}}$, in both cases with a seed-to-seed
+    scatter narrower than the mode-to-mode variation.  This is a
+    reassuring orthogonality: the \emph{location} of the step is set by
+    the planet distribution in $S_\mathrm{obs}$ and is unaffected by
+    the \emph{amplitude} of the injected step.  Both samples continue
+    to show the modest undershoot ($\hat{S} < 280\,\mathrm{W\,m^{-2}}$)
+    seen throughout this chapter, driven by the higher density of hot-side
+    planets that pulls the fitted transition toward smaller $S$.
+    \item \textbf{The seed-to-seed band narrows on P5 more than on
+    P4.}  The P5 band widths are $\lesssim 12\,\ln\Delta Z$-units
+    across the grid, while the P4 band widths are typically
+    $\sim 15$--$35$ units.  This reflects P5's larger planet count
+    (${\sim}\!2\times$ that of P4) reducing the measurement-noise
+    contribution to $\sigma_\mathrm{SMA}$.  Even in the fiducial
+    scenario the two samples remain in different noise regimes,
+    which motivates keeping them presented separately throughout the
+    chapter.
+\end{enumerate}
+
+Taken together with the wrr sweep (\Cref{ssec:wrr_sweep}), we can
+place order-of-magnitude constraints on the joint sensitivity of the
+Bayes factor: doubling $f_\mathrm{rgh}$ at fixed $x_{\mathrm{H_2O}}$
+buys roughly the same ${\sim}\!10$--$25$-unit gain in $\ln\Delta Z$
+as raising $x_{\mathrm{H_2O}}$ by half an order of magnitude at fixed
+$f_\mathrm{rgh}$.  Neither knob is dominant; both saturate softly
+because the inference is already SMA-driven and window-limited.
+
+\Cref{fig:plato_frgh_sweep_panels} shows the detected planet sample
+for one representative trial at $f_\mathrm{rgh} \in \{0.2,\,0.8,\,1\}$:
+the fraction of coloured "inflated" points and the total length of
+the grey inflation lines both grow visibly with $f_\mathrm{rgh}$,
+sharpening the step at $S_\mathrm{thresh}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_frgh_sweep_lnk}
+    \caption[$\ln\Delta Z$ and $\hat{S}_\mathrm{thresh}$ vs $f_\mathrm{rgh}$]{%
+        Left: Bayes factor $\ln\Delta Z$ as a function of the injected
+        runaway-greenhouse fraction $f_\mathrm{rgh}$ for P4 (blue) and
+        P5 (red).  Right: the corresponding posterior-median of the
+        recovered runaway-GH threshold $\hat{S}_\mathrm{thresh}$; the
+        dotted horizontal line is the injected value
+        $280\,\mathrm{W\,m^{-2}}$.  In both panels each marker is the
+        median of $10$ independent noise realisations and the shaded
+        band spans the $16$--$84\,\%$ range of those draws.  The
+        dashed vertical line marks the Schlecker et al.\ (2024)
+        fiducial $f_\mathrm{rgh}=0.8$.  All other pipeline parameters
+        are as listed in \Cref{tab:frgh_sweep_params}.}
+    \label{fig:plato_frgh_sweep_lnk}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_frgh_sweep_panels}
+    \caption[Detected planet sample for key $f_\mathrm{rgh}$ values]{%
+        Detected planet sample for P4 (top row) and P5 (bottom row) at
+        $f_\mathrm{rgh} \in \{0.2,\,0.8,\,1\}$ (left to right).
+        Vertical grey lines connect each inflated planet's rocky
+        baseline radius to its observed radius; the fraction of hot-side
+        planets carrying an inflation vector grows with $f_\mathrm{rgh}$,
+        driving the recovered $\ln\Delta Z$.  All other parameters as
+        in \Cref{tab:frgh_sweep_params}.}
+    \label{fig:plato_frgh_sweep_panels}
+\end{figure}
+
+% Figures produced by:
+%   Src/figures/plato_frgh_sweep.py
+%     → Figures/generated/plato_frgh_sweep_lnk.pdf
+%     → Figures/generated/plato_frgh_sweep_panels.pdf
+
+
+\subsection{Runaway threshold \texorpdfstring{$S_{\mathrm{thresh}}$}{S\_thresh}}
+\label{ssec:s_thresh}
+
+% TODO --- scientific question:
+%   How does varying the injected runaway threshold move the recovered
+%   posterior, and how well can the inference recover the injected value?
+% TODO --- plots / tables:
+%   Recovered S_thresh posterior for injected values in {200, 250, 280,
+%   310, 350} W/m^2. Injection--recovery diagonal.
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(S_thresh=<value>, ...) — Generator auto-run for
+%   non-fiducial thresholds.
+%   → notebooks/hzied_pipeline.ipynb Test 4 (cell 12)
+
+
+\subsection{Radius measurement precision \texorpdfstring{$\sigma_R$}{sigma\_R}}
+\label{ssec:sigma_r}
+
+% TODO --- scientific question:
+%   How strongly does the detection depend on the per-planet radius
+%   precision assumed for each PLATO sample (Red Book values: P1 1\%,
+%   P2 0.8\%, P4 4\%, P5 3\%)?
+% TODO --- plots / tables:
+%   Δln Z on P4 (and P5) as sigma_R_frac is varied around the Red Book
+%   default (e.g. 1\%, 2\%, 3\%, 4\%, 5\%).
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(sigma_R_frac=<value>, ...) overriding the
+%   per-sample default in _SIGMA_R.
+
+
+\subsection{Observable-cut choices}
+\label{ssec:cuts}
+
+% TODO --- scientific question:
+%   How sensitive is the detection to the choice of transit-depth
+%   threshold and mass cuts used to define the observable subset?
+% TODO --- plots / tables:
+%   (i)  Planet counts and Δln Z as depth_min_ppm is varied (80 → 60 → 40).
+%   (ii) Planet counts and Δln Z as M_min, M_max is varied at fixed
+%        inflation model.
+%
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(depth_min_ppm=<value>, M_min=<value>,
+%                      M_max=<value>, ...)
+%   → notebooks/hzied_pipeline.ipynb transit-depth sweep (cell 26);
+%     wp1_detection_limits.ipynb for the full depth exploration.
+
+
+\subsection{Hypothesis-test methodology}
+\label{ssec:methodology}
+
+% TODO --- scientific question:
+%   Is the recovered Δln Z robust to the choice of statistical
+%   estimator (rolling vs independent bins, propagated vs empirical
+%   sigma, cold_edge vs standard x-mode)?
+% TODO --- plots / tables:
+%   Small robustness table: recovered Δln Z under each combination.
+% TODO --- pipeline call / notebook cell:
+%   run_hzied_analysis(sigma_sma_mode=..., independent_bins=...,
+%                      sma_x_mode=..., ...)
+%   → notebooks/hzied_pipeline.ipynb Test 6 (cell 16) and cells 28--32.
+
+

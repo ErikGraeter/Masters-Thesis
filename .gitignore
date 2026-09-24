@@ -26,3 +26,6 @@ __pycache__/
 
 # VS Code local overrides (personal, not project settings)
 .vscode/*.local.json
+
+# Compiled PDF output (build artifact)
+main.pdf

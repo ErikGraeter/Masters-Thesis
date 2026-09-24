@@ -1,66 +1,158 @@
 \chapter{Introduction}
 \label{chap:introduction}
 
-% (write section body here)
 
 \section{Motivation}
 \label{sec:motivation}
-Whether Earth-like conditions on other planets in our galaxy are common is one central question in modern astronomy, which observational data itself has not been able to answer yet. The discovery of thousands of exoplanets in the last two decades have shown that small planets are ubiquitous around all types of dwarf stars \parencite{Fressin2013,Bergsten2022}, with an occurrence-rate distribution that is bimodal across the Fulton radius valley near $1.8\,\Rearth$ separating rocky
+
+Whether Earth-like conditions are common in the galaxy is one of the
+central questions of modern astronomy, and one that observational
+data alone has not been able to answer.  Two decades of transit and
+radial-velocity surveys have shown that small planets are ubiquitous
+around all types of dwarf stars \parencite{Fressin2013,Bergsten2022},
+with an occurrence-rate distribution that is bimodal across the
+well-studied radius valley near $1.8\,\Rearth$ separating rocky
 super-Earths from sub-Neptunes \parencite{Fulton2017}, and that
 $\eta_\oplus\sim 0.2$--$0.6$ rocky planets sit in the classically-defined
-habitable zone of each solar-like host star \parencite{Bryson2021,Kunimoto2020}.
-Yet the observational sample of planets receiving near-Earth irradiation remains sparse, biased toward large radii, and with the exception of a small number of bright nearby M dwarfs dominated by hosts, too faint for the atmospheric follow-up that a habitability claim would require \parencite{Bean2017,LustigYaeger2019}. The habitable zone therefore remains, more than three decades after its modern formulation \parencite{Kasting1988,Kopparapu2013}, a theoretical construct grounded on essentially a single data point.
+habitable zone of each solar-like host
+\parencite{Bryson2021,Kunimoto2020}.
+Yet the observational sample of planets receiving near-Earth
+irradiation remains sparse, biased toward large radii, and --- with
+the exception of a small number of bright nearby M dwarfs ---
+dominated by hosts too faint for the atmospheric follow-up that a
+habitability claim would require
+\parencite{Bean2017,LustigYaeger2019}.  The habitable zone therefore
+remains, more than three decades after its modern formulation
+\parencite{Kasting1988,Kopparapu2013}, a theoretical construct
+grounded on essentially a single data point.
 
-
-A clear illusatration of this comes from Venus and Earth. Both accreted from overlapping mass reservoirs
+The clearest illustration of why this matters comes from Venus and
+Earth.  The two planets accreted from overlapping mass reservoirs
 \parencite{Kleine2020,Raymond2020}, exhibit bulk densities within a
-few percent of each other \parencite{Smrekar2018}, and are thought to have undergo similar formation stages.
-However, their current states differ dramatically. Whether Venus lost its water content in the past still remains open \parencite{Hamano2013,Turbet2021}.
+few percent of each other \parencite{Smrekar2018}, and are thought to
+have followed broadly similar formation sequences, including a hot
+magma-ocean stage driven by the late giant impacts of accretion
+\parencite{Gillmann2020,ElkinsTanton2012,Lichtenberg2022}.  Their
+present states could not be more different.  Whether Venus lost its
+water reservoir late in its evolution, through a slow desiccation
+after billions of years of temperate climate \parencite{WayGenio2020},
+or already during its magma-ocean phase, through the trapping of a
+steam-dominated atmosphere over molten silicate
+\parencite{Hamano2013,Turbet2021}, remains open.  The two scenarios
+predict radically different geophysical histories --- and radically
+different observational signatures on exoplanets caught mid-way
+between them.
 
-The runaway greenhouse effect is thought to separate them: If a planet's irradiation exceeds the threshold, where it is higher than the outgoing longwave radiation, no stable state of liquid surface water is possible and the entire ocenas evaporate into a steam atmosphere, leading to a net radius inflation. This observation, that the runaway transition is imprinted on the transit radius reframes the question of habitable zone. Instead of attempting to prove per-planet if it is habitable, we aim to aks whether the whole \emph{population} of small planets this step in mean transit radius.
-A statistical detection of this discontinuity would provide a first observational test of the habitable zone concept itself, whereas a non-detection would deliver an upper limit on water content in the population of small planets \parencite{Turbet2019,BixelApai2020,Bean2017}.
+The runaway greenhouse effect is what separates them, and its
+physics is a simple positive feedback.  Water vapour is a strong
+greenhouse gas, and a warmer atmosphere holds exponentially more of
+it, so any wet planet whose insolation is nudged upward warms
+further --- and the further it warms, the more opaque its atmosphere
+becomes to its own outgoing thermal radiation.  There is a ceiling
+on the rate at which such an atmosphere can radiate to space --- the
+Simpson--Nakajima limit \parencite{Nakajima1992,Goldblatt2013} ---
+and once the absorbed stellar flux exceeds this ceiling, no
+equilibrium with a liquid ocean is possible: the ocean evaporates,
+the surface climbs past silicate-melting temperatures, and the
+planet settles into a steam-atmosphere-over-magma-ocean state whose
+transit signature is measurably different from the temperate one it
+replaced.  The numerical value of the threshold, its dependence on
+stellar spectrum and planetary albedo, and the size of the resulting
+transit-radius inflation are treated in
+\Cref{chap:exoplanet_characterization}.
+
+This observation --- that the runaway transition is imprinted on the
+transit radius --- reframes the habitable-zone question.  Instead of
+attempting to prove that any single planet is habitable, one can ask
+whether the \emph{population} of small planets shows the step in
+mean transit radius that the runaway greenhouse hypothesis predicts.
+A statistical detection of this discontinuity would constitute the
+first observational test of the habitable-zone concept itself, and a
+non-detection would place quantitative upper limits on the water
+inventory of rocky worlds
+\parencite{Turbet2019,BixelApai2020,Bean2017}.
 \textcite{Schlecker2024} formalised this idea into a concrete
-predictive framework, which terming the habitable-zone inner edge
-discontinuity, or \HZIED.
+predictive framework, which they termed the habitable-zone inner-edge
+discontinuity, or \HZIED.  Their principal finding was that a
+demographic detection is within reach of the ESA \PLATO mission,
+provided a set of favourable assumptions on stellar age, planetary
+water content, and target selection all hold.  Whether that
+conclusion survives contact with the \emph{actual} \PLATO Input
+Catalog, with the real distribution of stellar ages measured by
+Gaia, and with a realistic population of planet compositions
+inherited from modern formation models is the question this thesis
+takes up.
 
-
-
-
+The current transit catalogue --- assembled over two decades by
+\Kepler{}, K2, and \TESS{} --- is deeply informative about what
+happens on the hot side of the runaway threshold, and essentially
+mute about the cold side.  Of $4\,044$ confirmed \Kepler+K2+\TESS{}
+planets with both a measured radius and a computed instellation,
+only eight sit below $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$ at
+any radius, and only one satisfies the mildest \HZIED-compatible
+cut used elsewhere in this thesis.  The two-mean Bayes factor
+introduced as the simplest test of the discontinuity is therefore
+formally undefined on today's data
+(\Cref{chap:kepler_tess}).  \PLATO exists precisely to change that.
 
 
 \section{Aims and contributions of this thesis}
 \label{sec:contributions}
 
 This thesis extends the \HZIED framework of \textcite{Schlecker2024}
-along with an evaluation on actual \PLATO targets.
+along four axes chosen for their expected impact on the predicted
+detectability, and evaluates the result on the actual \PLATO target
+samples rather than on a generic Gaia-based synthetic catalogue.
 
-
-\emph{Real target samples.} The planet population generator ingests the PLATO Input Catalogue directly and produces planet catalogues for the P4 (M-dwarf, $V\leq 16$) and P5 (FGK, $V\leq 13$) samples defined
-by \textcite{Nascimbeni2022}. Per-sample radius precisions are
+\emph{Real target samples.}  The population generator ingests the
+\PLATO Input Catalog directly and produces planet catalogues for
+the P4 (M-dwarf, $V\leq 16$) and P5 (FGK, $V\leq 13$) samples defined
+by \textcite{Nascimbeni2022}.  Per-sample radius precisions are
 adopted from the \PLATO \emph{Definition Study Report}
 \parencite{ESA2017PLATO} rather than assumed to be uniform across
 the survey.
 
-\emph{Real stellar ages}
-Where the original framework drew stellar
+\emph{Real stellar ages.}  Where the original framework drew stellar
 ages from a uniform prior on $[0,\,10]\,\mathrm{Gyr}$, this thesis
 uses the Gaia DR3 FLAME isochrone catalogue \parencite{GaiaDR3}
 directly, or a bootstrap fill from the FLAME distribution when no
 FLAME value is available, or a blend of FLAME plus a uniform prior
-for the unmeasured tail.
+for the unmeasured tail.  For age-sensitive steam models such as
+\textcite{Aguichine2021}, the choice between these variants shifts
+the recovered evidence by tens of $\ln\Delta Z$ units, and in one
+case flips the sign of the detection.  The origin of this
+sensitivity is quantified in \Cref{ssec:aguichine}.
 
 \emph{Physically extended steam prescriptions.}  Beyond the
-\textcite{Turbet2020} grey-atmosphere table used in the
-original framework, additional prescriptions are compared side
-by side: a AGNI radiative-convective grid, an
+\textcite{Turbet2020} grey-atmosphere table that anchored the
+original framework, five additional prescriptions are compared side
+by side: a 2D AGNI radiative--convective grid, an
 AGNI+PALEOS-updated version of that grid, the
 \textcite{Aguichine2021} irradiated-ocean model, the
-\textcite{Pierrehumbert2023} Hycean prescription, and a mixed
-rocky/Hycean population motivated by \textcite{Innes2023}.
+\textcite{Pierrehumbert2022} Hycean prescription, and a mixed
+rocky/Hycean population motivated by \textcite{Innes2023}.  The
+comparison exposes both the mass range over which each prescription
+is defensible and the systematic differences between them at the
+fiducial injection.  The mixed model in particular shows that a
+composite population with two distinct runaway thresholds can
+produce a strong single-step Bayes factor whose recovered
+threshold is nowhere near either injected value
+(\Cref{ssec:hycean_mixed}) --- a cautionary result for future
+interpretation of a real detection.
 
-
-
-
+\emph{Multi-seed noise-realisation treatment.}  Every sweep figure
+in this thesis reports the median of ten independent noise
+realisations and shades the $16$--$84\,\%$ percentile band across
+them.  For typical \PLATO configurations the seed-to-seed spread on
+the recovered $\ln\Delta Z$ is comparable in amplitude to the
+mode-to-mode systematic across the injected water content, and
+single-seed numbers reported in earlier literature therefore need
+to be interpreted with the seed-to-seed noise band in mind.  The
+same treatment is applied uniformly to the recovered
+$\hat{S}_\mathrm{thresh}$, which is used throughout as an
+orthogonal diagnostic against the possibility of a decisive
+$\ln\Delta Z$ arising from structure the single-step hypothesis
+cannot represent.
 
 The overarching question addressed by these extensions is:
 
@@ -69,37 +161,4 @@ The overarching question addressed by these extensions is:
 \end{quote}
 
 
-
-
-
-% (write section body here)
-
-\section{The habitable zone and its inner edge}
-\label{sec:hz}
-
-% (write section body here)
-
-\section{The runaway greenhouse and its observable signature}
-\label{sec:runaway_signature}
-
-% (write section body here)
-
-\section{A demographic test: the habitable-zone inner-edge discontinuity}
-\label{sec:hzied}
-
-% (write section body here)
-
-\section{The \PLATO mission}
-\label{sec:plato}
-
-% (write section body here)
-
-\section{Contributions of this thesis}
-\label{sec:contributions}
-
-% (write section body here)
-
-\section{Structure of this thesis}
-\label{sec:structure}
-
-% (write section body here)
+% \section{Structure of this thesis} removed from condensed version

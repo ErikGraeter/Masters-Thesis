@@ -1,0 +1,46 @@
+% ============================================================
+% Chapter 3 — Results + HZIED Baseline parameter sweep
+% Combines: 07_results + §HZIED Baseline from 08_steam_sensitivity
+% ============================================================
+\input{Chapters/07_results}
+
+
+% =======================================================================
+% §3.6 — HZIED Baseline: Turbet Steam Model
+% (moved here from ch08 for condensed structure; §4.1 in original)
+% =======================================================================
+\section{HZIED Baseline: Turbet Steam Model}
+\label{sec:hzied_plato_ch3}
+
+With the observable sample established in \Cref{sec:planet_yield}, the
+\HZIED hypothesis test is run on P4 and P5 using the \textcite{Turbet2020}
+steam-atmosphere grid as the inflation prescription, combined with the
+\textcite{DornLichtenberg2021} water-retention correction
+($x_{\mathrm{H_2O}} = 0.005$, $f_{\mathrm{rgh}} = 0.8$).
+
+The P4 sample ($N = 80$) yields $\ln\Delta Z = 26.2$, which exceeds the
+strong-evidence threshold ($\ln\Delta Z > 5$) by a wide margin.  The
+P5 sample ($N = 58$) yields $\ln\Delta Z = 10.3$, also a strong detection.
+Both values are substantially lower than the generic reference
+($\ln\Delta Z = 1114$) because the \PLATO samples are finite: the number of
+detectable rocky habitable-zone planets is set by the PIC.
+
+The depth cut of $80\,\mathrm{ppm}$ is conservative for \PLATO.
+Relaxing it to $60\,\mathrm{ppm}$ (physically justified: an Earth-sized
+planet around a solar-type star produces
+$\delta = (R_p/R_\star)^2 \approx 84\,\mathrm{ppm}$) leaves P4 unchanged
+($N = 80$, $\ln\Delta Z = 24.5$) but raises P5 from $N = 58$ to $N = 82$
+($+41\,\%$) and its Bayes factor from $10.3$ to $44.3$.  All subsequent
+analyses use the relaxed $60\,\mathrm{ppm}$ threshold as the fiducial.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_relaxed_depth_hzied}
+    \caption[\HZIED with relaxed depth cut ($60\,\mathrm{ppm}$)]{%
+        Detected planet sample for P4 (left) and P5 (right) with the
+        transit depth threshold relaxed to $60\,\mathrm{ppm}$.
+        All other parameters as in \Cref{fig:plato_baseline_hzied}.
+        P4 is unchanged ($N = 80$, $\ln\Delta Z = 24.5$).
+        P5 gains 24 planets ($N = 82$, $\ln\Delta Z = 44.3$).}
+    \label{fig:plato_relaxed_depth_hzied}
+\end{figure}

@@ -1,29 +1,38 @@
 \chapter{Model Setup and Validation}
 \label{chap:setup_validation}
 
-% (write section body here)
+Before presenting the scientific results, this chapter documents the specific
+configuration used for the analysis and demonstrates that the extended
+pipeline recovers known results under controlled conditions.  This provides
+a trust foundation for the extensions presented in \Cref{chap:results}.
+The fiducial simulation configuration is documented in
+\Cref{sec:simulation_config} (\Cref{chap:methodology}); the loading and
+diagnostic checks on the \PLATO Input Catalogue are documented in
+\Cref{sec:pic_integration} (\Cref{chap:plato_mission}).  This chapter
+covers only the validation checks that are not natural fits in the
+methodology or mission chapters.
 
-\section{Simulation Configuration}
-\label{sec:simulation_config}
-
-% (write section body here)
 
 \section{Reproduction of the Schlecker+2024 Baseline}
 \label{sec:schlecker_reproduction}
 
-% (write section body here)
+\emph{Scaffold.}
+Reproduction of the headline detectability result of \textcite{Schlecker2024}
+on a generic Gaia-based sample. Comparison of the recovered
+$\Delta \ln Z$ and posterior on $S_{\mathrm{thresh}}$ with the published
+values. Purpose: verify that the extended pipeline reduces to the original
+framework in the appropriate limit before scientific extensions are added.
 
-\section{PLATO Input Catalog Integration}
-\label{sec:pic_integration}
 
-% (write section body here)
-
-\section{Age-Distribution Validation}
-\label{sec:age_validation}
-
-% (write section body here)
+% \section{Age-Distribution Validation} removed for condensed version
+\phantomsection\label{sec:age_validation}
 
 \section{Injection Recovery}
 \label{sec:injection_recovery}
 
-% (write section body here)
+\emph{Scaffold.}
+Given injected values of $S_{\mathrm{thresh}}$, $x_{\mathrm{H_2O}}$, and
+$f_{\mathrm{rgh}}$, the hypothesis-test pipeline must recover them within
+their posterior credible intervals. Recovery tests over a small grid to
+check for systematic biases before applying the pipeline to the sensitivity
+studies of \Cref{chap:results}.

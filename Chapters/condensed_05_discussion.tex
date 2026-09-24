@@ -1,0 +1,31 @@
+% ============================================================
+% Chapter 5 — Discussion and Outlook
+% Combines: 10_summary + 11_discussion + 12_outlook
+% ============================================================
+
+% --- Ch10: Summary (chapter-level, include directly) ---
+\input{Chapters/10_summary}
+
+% --- Ch11: Discussion (demote chapter→section) ---
+\let\savedchapterK\chapter
+\let\savedsectionK\section
+\let\savedsubsectionK\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/11_discussion}
+\let\chapter\savedchapterK
+\let\section\savedsectionK
+\let\subsection\savedsubsectionK
+
+% --- Ch12: Outlook (demote chapter→section) ---
+\let\savedchapterL\chapter
+\let\savedsectionL\section
+\let\savedsubsectionL\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/12_outlook}
+\let\chapter\savedchapterL
+\let\section\savedsectionL
+\let\subsection\savedsubsectionL

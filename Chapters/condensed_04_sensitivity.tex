@@ -1,0 +1,19 @@
+% ============================================================
+% Chapter 4 — Sensitivity Analysis
+% Combines: 08_steam_sensitivity + 09_parameter_sensitivity
+% ============================================================
+
+% --- Ch08: Steam model sensitivity (chapter-level, include directly) ---
+\input{Chapters/08_steam_sensitivity}
+
+% --- Ch09: Parameter sensitivity (demote chapter→section) ---
+\let\savedchapterI\chapter
+\let\savedsectionI\section
+\let\savedsubsectionI\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/09_parameter_sensitivity}
+\let\chapter\savedchapterI
+\let\section\savedsectionI
+\let\subsection\savedsubsectionI

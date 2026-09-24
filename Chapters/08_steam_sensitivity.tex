@@ -1,0 +1,560 @@
+\chapter{Sensitivity to the steam-atmosphere model}
+\label{chap:steam_sensitivity}
+
+The baseline forecast of \Cref{chap:results} adopts the AGNI-updated
+steam mass--radius grid with the Dorn \& Lichtenberg (2021) water-retention
+correction as the fiducial physical prescription.  This chapter tests how
+strongly the \HZIED detection depends on that choice by re-running the
+same P4 and P5 analyses under each of the alternative steam-atmosphere
+models introduced in \Cref{sec:runaway_models}.  Every sweep uses the
+observable cuts of the AGNI baseline; only the mass--radius prescription
+varies.  Figures in this chapter are produced by
+\texttt{Src/figures/ch08\_steam\_sensitivity.py}.
+
+
+% §HZIED Baseline: Turbet Steam Model moved to condensed §3.6
+% (condensed_03_results.tex); labels live in 07_results.tex and condensed wrapper
+\phantomsection\label{ssec:relaxed_depth}
+
+
+% =======================================================================
+\section{Dependence on the Steam Atmosphere Model}
+\label{sec:steam_model}
+
+The amplitude and shape of the predicted radius discontinuity depend
+directly on the steam-atmosphere model used to inflate hot-side planets.
+Five prescriptions beyond the Turbet baseline are compared here, all run
+at $\texttt{depth\_min\_ppm} = 60$, $x_{\mathrm{H_2O}} = 0.005$,
+$f_{\mathrm{rgh}} = 0.8$, and \texttt{age\_mode = `sampled'}.
+\Cref{tab:steam_model_summary} gives an overview of all results.
+
+\begin{table}[H]
+    \centering
+    \caption[Steam model comparison: planet yield and Bayes factor]{%
+        Planet yield and Bayes factor for each steam-atmosphere prescription
+        on the P4 and P5 samples (depth $\geq 60\,\mathrm{ppm}$, $x_{\mathrm{H_2O}}=0.005$,
+        $f_{\mathrm{rgh}}=0.8$).  $N$ is the number of planets entering the
+        \HZIED analysis; cold/infl.\ are planets on the cold and inflated
+        hot side of $S_\mathrm{thresh}$.}
+    \label{tab:steam_model_summary}
+    \small
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{llrrrrr}
+        \toprule
+        Model & Sample & $M$ range ($M_\oplus$) & $N$ & cold & infl. & $\ln\Delta Z$ \\
+        \midrule
+        Turbet     & P4 & [0.1,\,2.05] &  80 & 27 & 44 &  24.5 \\
+                   & P5 &              &  82 & 16 & 54 &  44.3 \\
+        \midrule
+        AGNI       & P4 & [0.1,\,10]   & 135 & 41 & 78 &  17.9 \\
+                   & P5 &              & 172 & 26 &118 &  75.5 \\
+        \midrule
+        AGNI updated & P4 & [0.5,\,20] & 139 & 38 & 80 &  44.9 \\
+                   & P5 &              & 266 & 33 &186 &  15.6 \\
+        \midrule
+        Aguichine  & P4 & [0.2,\,20]   & 159 & 46 & 90 &  49.2 \\
+                   & P5 &              & 270 & 37 &185 &  31.7 \\
+        \midrule
+        Pierrehumbert & P4 & [1.5,\,9] &  64 & 24 & 35 & 149.9 \\
+        ($S_\mathrm{thresh}=435\,\mathrm{W\,m^{-2}}$) & P5 & & 127 & 16 & 88 &  35.9 \\
+        \midrule
+        Hycean mixed & P4 & [0.5,\,20] & 139 & 38 & 75 &  75.0 \\
+        ($f_\mathrm{hycean}=0.5$) & P5 &  & 277 & 33 &207 &  93.9 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+
+\subsection{Turbet steam table (reference)}
+\label{ssec:turbet}
+
+The \textcite{Turbet2020} model is a 1D grey-atmosphere inverse
+radiative-convective model applied to a rocky baseline from
+\textcite{Zeng2016}.  The steam-atmosphere radius increment is tabulated
+as a function of planet mass ($M \in [0.1,\,2.05]\,\Mearth$) and water
+mass fraction ($x_{\mathrm{H_2O}} \in [0,\,0.05]$).  This is the
+Schlecker+2024 fiducial and serves as the reference for all comparisons
+in this section.  Results at $60\,\mathrm{ppm}$ are reported in
+\Cref{ssec:relaxed_depth}: P4 $N = 80$, $\ln\Delta Z = 24.5$;
+P5 $N = 82$, $\ln\Delta Z = 44.3$.
+
+
+\subsection{AGNI grid}
+\label{ssec:agni}
+
+The AGNI radiative-transfer grid (grid\_022, \textcite{BoerNichollsLichtenberg2025})
+tabulates the photospheric radius of a steam-bearing planet on a 2D grid
+of planet mass and instellation.  For $M < 1\,\Mearth$ the grid falls
+back to the \textcite{Turbet2020} table.  The combined observable range
+is $M \in [0.1,\,10]\,\Mearth$, extending to five times the Turbet
+ceiling and capturing the super-Earth population.
+
+The wider mass range substantially increases the planet yield: P4 gains
+$+69\%$ planets ($N = 135$) and P5 gains $+110\%$ ($N = 172$) relative
+to the Turbet reference.  Despite more planets, the P4 Bayes factor drops
+to $\ln\Delta Z = 17.9$: the additional super-Earth-mass planets at
+$M \in [2,\,10]\,\Mearth$ experience smaller fractional radius inflation
+from the AGNI model at the fiducial $x_{\mathrm{H_2O}} = 0.005$, diluting
+the step signal.  P5 benefits strongly ($\ln\Delta Z = 75.5$) because its
+larger stellar radii mean that the deeper transits of heavier planets
+bring more objects above the $60\,\mathrm{ppm}$ cut.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_agni_hzied}
+    \caption[HZIED with AGNI steam model]{%
+        Detected planet sample for P4 (left) and P5 (right) using the
+        AGNI grid \parencite{BoerNichollsLichtenberg2025},
+        $M \in [0.1,\,10]\,\Mearth$, depth $\geq 60\,\mathrm{ppm}$.
+        P4: $N=135$, $\ln\Delta Z = 17.9$.
+        P5: $N=172$, $\ln\Delta Z = 75.5$.}
+    \label{fig:plato_agni_hzied}
+\end{figure}
+
+
+\subsection{Extended AGNI + PALEOS (\texttt{agni\_updated})}
+\label{ssec:agni_updated}
+
+The \texttt{agni\_updated} prescription \parencite{BoerNichollsLichtenberg2025}
+replaces the 2D grid with a 1D AGNI+PALEOS steam table computed via the
+ratio method: the inflated radius is obtained by scaling the PALEOS rocky
+baseline by the AGNI steam-to-dry radius ratio, ensuring consistency
+between the interior and atmosphere models.  The \textcite{DornLichtenberg2021}
+water-retention correction is applied on top.  The table covers
+$M \in [0.5,\,20]\,\Mearth$; below $0.5\,\Mearth$ the stratosphere
+temperature is prescribed rather than solved, so lower-mass planets are
+excluded.
+
+Opening the mass range to $20\,\Mearth$ doubles the P5 yield to $N = 266$
+($+225\%$ vs.\ Turbet) and nearly doubles P4 to $N = 139$.  However, the
+P5 Bayes factor falls to $\ln\Delta Z = 15.6$: at the fiducial water
+fraction, the large-mass tail of the \texttt{agni\_updated} grid predicts
+modest inflation, and the many additional mini-Neptune-mass planets add
+noise without sharpening the step.  P4 is more robust ($\ln\Delta Z = 44.9$)
+because M~dwarfs predominantly host lower-mass planets where the inflation
+amplitude is larger relative to the scatter.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_agni_updated_hzied}
+    \caption[HZIED with AGNI updated steam model]{%
+        Detected planet sample for P4 (left) and P5 (right) using the
+        \texttt{agni\_updated} prescription \parencite{BoerNichollsLichtenberg2025},
+        $M \in [0.5,\,20]\,\Mearth$, depth $\geq 60\,\mathrm{ppm}$.
+        P4: $N=139$, $\ln\Delta Z = 44.9$.
+        P5: $N=266$, $\ln\Delta Z = 15.6$.}
+    \label{fig:plato_agni_updated_hzied}
+\end{figure}
+
+
+\subsection{Aguichine irradiated ocean planets}
+\label{ssec:aguichine}
+
+\textcite{Aguichine2021} compute internal-structure models for irradiated
+ocean planets consisting of a rocky core, a supercritical water layer,
+and a steam atmosphere, tabulated as a function of core mass fraction,
+water mass fraction (WMF), irradiation temperature $T_\mathrm{eq}$, and
+--- unlike every steam prescription used earlier in this chapter ---
+planet \emph{age} in Gyr.  The model is physically distinct from the
+AGNI family: rather than treating the steam layer as a thin atmospheric
+increment on a rocky baseline, it self-consistently solves for the bulk
+radius of a water-dominated interior that contracts with time as
+gravitational-energy release and radiogenic heat diminish.  The
+applicable mass range is $M \in [0.2,\,20]\,\Mearth$, and the tabulated
+age range spans $0.1$--$20\,\mathrm{Gyr}$.
+
+At the fixed benchmark configuration used up to this point in the
+chapter --- \texttt{aguichine} steam model, $x_{\mathrm{H_2O}}=0.005$,
+$f_\mathrm{rgh}=0.8$, $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$,
+depth $\geq 60\,\mathrm{ppm}$, $M \in [0.2,\,20]\,\Mearth$, and a
+strict FLAME age cut --- the planet yields are comparable to
+\texttt{agni\_updated} (P4 $N \approx 160$--$170$, P5 $N \approx 270$).
+The Bayes factors are also comparable
+($\ln\Delta Z \sim 20$--$50$), with the exact number depending
+sensitively on the age assignment scheme (see below) and on the
+noise-realisation seed
+(the seed-to-seed jitter is a factor of ${\sim}2$ in $\ln\Delta Z$,
+as quantified in \Cref{ssec:wrr_sweep} for the analogous
+\texttt{agni\_updated} sweep).
+
+\paragraph{Context: what has been kept fixed so far.}
+Every subsection of \Cref{sec:steam_model} up to this point has used
+\texttt{age\_mode='sampled'} --- FLAME ages where Gaia provides them,
+bootstrap-filled from the empirical FLAME distribution for the
+$\sim 21\,\%$ of P5 stars and $\sim 76\,\%$ of P4 stars without a
+FLAME age (see \Cref{sec:plato_samples} for the FLAME coverage).
+That choice preserved the full stellar pool while keeping the age
+distribution close to what Gaia actually measures.  The Aguichine
+prescription is however the first steam model whose radius depends
+on age; the choice of age-assignment scheme therefore feeds through
+to the inflated radii and, in turn, to the recovered $\ln\Delta Z$
+and $\hat{S}_\mathrm{thresh}$.  The following analysis quantifies
+this sensitivity.
+
+\paragraph{Age-assignment schemes compared.}
+Four schemes are compared here:
+\begin{itemize}
+    \item \texttt{strict} --- keep only stars with a Gaia FLAME age
+    (Creevey et al.\ 2023); drop the rest.  Physically clean but
+    strongly reduces $N$, especially for P4 where FLAME coverage is
+    ${\sim}24\,\%$.
+    \item \texttt{sampled} --- FLAME where available; bootstrap-fill
+    missing ages from the empirical FLAME distribution of the same
+    sample.  Preserves $N$; assumes the unmeasured stars share the
+    same age distribution as the measured ones.  This is the default
+    used elsewhere in the chapter.
+    \item \texttt{flame\_flat} --- FLAME where available; fill missing
+    ages from a uniform $[0,\,10]\,\mathrm{Gyr}$ prior (mode added
+    for this analysis).  Combines observed FLAME data with a
+    maximally agnostic prior for the unmeasured tail --- important
+    if one worries that FLAME's detection sensitivity biases its
+    reported age distribution.
+    \item \texttt{flat} --- uniform $[0,\,10]\,\mathrm{Gyr}$ for every
+    star; FLAME ignored.  Reproduces the pre-FLAME pipeline
+    behaviour and serves as an upper bound on how much age
+    information can matter for the HZIED signal.
+\end{itemize}
+
+\begin{table}[H]
+    \centering
+    \caption[Fixed parameters of the Aguichine age analysis]{%
+        Configuration held fixed while the age-assignment mode is varied.
+        Only \texttt{age\_mode} changes across the sweep; every other
+        parameter matches the baseline used in
+        \Cref{sec:steam_model,sec:composition_dependence}.}
+    \label{tab:aguichine_age_params}
+    \small
+    \begin{tabular}{lll}
+        \toprule
+        Parameter & Value & Note \\
+        \midrule
+        \multicolumn{3}{l}{\textit{Injection / model}} \\
+        \texttt{radius\_inflation} & \texttt{aguichine} & Aguichine+2025 SWE table \\
+        \texttt{use\_dl21}         & \texttt{True}      & Dorn \& Lichtenberg (2021) water incorporation \\
+        $x_\mathrm{H_2O}$          & $0.005$            & Schlecker+2024 fiducial \\
+        $S_\mathrm{thresh}$        & $280\,\mathrm{W\,m^{-2}}$ & rocky HZ inner edge \\
+        $f_\mathrm{rgh}$           & $0.8$              & runaway greenhouse fraction \\
+        \multicolumn{3}{l}{\textit{Observable cuts}} \\
+        $M$                        & $[0.2,\,20]\,\Mearth$  & Aguichine table range \\
+        depth                      & $\geq 60\,\mathrm{ppm}$ & relaxed cut (\Cref{ssec:relaxed_depth}) \\
+        \multicolumn{3}{l}{\textit{Inference}} \\
+        window $w$                 & $25$               & rolling SMA \\
+        $\sigma_R / R$             & $4\%$ (P4), $3\%$ (P5) & PLATO Red Book \\
+        $\sigma_S / S$             & $5\%$              & Schlecker+2024 \\
+        \texttt{sma\_x\_mode}      & \texttt{standard}  & mean $S$ per window \\
+        \texttt{sigma\_sma\_mode}  & \texttt{empirical} & $\mathrm{std}(R_\mathrm{obs})/\sqrt{w}$ \\
+        \texttt{nlive}             & $100$              & dynesty live points \\
+        seed base                  & $42+200\,i$ ($i=0..3$) & unique per age mode; 10 trials each (seeds $+13k$, $k=0..9$) \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\paragraph{Results.}
+\Cref{fig:plato_aguichine_age_lnk} shows the recovered $\ln\Delta Z$
+(left) and posterior-median $\hat{S}_\mathrm{thresh}$ (right) across
+the four age modes for P4 and P5.  Each marker is the median across
+$10$ independent noise realisations; the shaded band is the
+$16$--$84\,\%$ range, capturing both measurement-noise scatter and
+dynesty variance at $n_\mathrm{live}=100$ (same construction as
+\Cref{ssec:wrr_sweep}).  The multi-seed medians (bracketed by the
+per-seed min/max across the 10 draws) are collected in
+\Cref{tab:aguichine_age_results}.
+
+\begin{table}[H]
+    \centering
+    \caption[Multi-seed medians of the aguichine age sweep]{%
+        Multi-seed medians of the aguichine age-mode sweep.  $\ln\Delta Z$
+        columns quote the median across $10$ noise realisations with the
+        per-seed min/max bracket; $\hat{S}_\mathrm{th}$ columns are the
+        median of the posterior-median values across the same $10$ draws
+        (W\,m$^{-2}$).  The injected threshold is $280\,\mathrm{W\,m^{-2}}$.}
+    \label{tab:aguichine_age_results}
+    \small
+    \begin{tabular}{lccccccc}
+        \toprule
+        \texttt{age\_mode} & $N_\mathrm{P4}$ & P4 $\ln\Delta Z$ (med [min,max])
+        & P4 $\hat{S}_\mathrm{th}$
+        & $N_\mathrm{P5}$ & P5 $\ln\Delta Z$ (med [min,max])
+        & P5 $\hat{S}_\mathrm{th}$ \\
+        \midrule
+        \texttt{strict}     & $31$  & $\phantom{-}0.1\;[-0.3,\,0.6]$   & $584$ & $173$ & $23.6\;[19.4,\,34.1]$  & $348$ \\
+        \texttt{sampled}    & $159$ & $55.0\;[34.6,\,79.4]$            & $208$ & $270$ & $26.4\;[22.1,\,36.6]$  & $256$ \\
+        \texttt{flame\_flat}& $148$ & $-1.3\;[-1.7,\,-0.3]$            & $256$ & $238$ & $42.2\;[35.9,\,56.2]$  & $359$ \\
+        \texttt{flat}       & $159$ & $62.4\;[48.7,\,71.9]$            & $205$ & $238$ & $38.6\;[29.3,\,52.6]$  & $385$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Unlike the wrr and Hycean sweeps, this one exposes a real
+age-driven sensitivity in the aguichine model, and the four modes
+respond in genuinely different ways.
+
+The \texttt{strict} mode collapses on P4: only about a quarter of
+M-dwarf hosts carry a FLAME age (\Cref{sec:plato_samples}), so
+requiring one drops the sample to $N=31$ and the step-function
+inference has no signal to find --- $\ln\Delta Z\approx 0$ and the
+recovered $\hat{S}_\mathrm{thresh}=584\,\mathrm{W\,m^{-2}}$ is
+prior-dominated.  On P5 the same cut is far less damaging (FLAME
+covers roughly $79\,\%$ of stars), and \texttt{strict} still yields
+$\ln\Delta Z\approx 24$ on $N=173$ planets.
+
+The \texttt{sampled} mode recovers a strong signal on P4
+($\ln\Delta Z\approx 55$) because bootstrapping from the observed
+FLAME distribution preserves the narrow, mostly-old age pool that
+the M-dwarf hosts already sit in.  Old planets on the hot side
+contract more in the aguichine model, so the step at
+$S_\mathrm{thresh}$ stays coherent and the sampler picks it up.
+
+The \texttt{flame\_flat} mode is the most instructive of the four
+because it actually \emph{disfavours} H\textsubscript{1} on P4,
+returning $\ln\Delta Z = -1.3$.  The mechanism is a bimodal age
+distribution: the $24\,\%$ of stars with a real FLAME age sit in a
+narrow, old band, while the $76\,\%$ filled from the uniform prior
+spread out over $[0,\,10]\,\mathrm{Gyr}$.  On the hot side of
+$S_\mathrm{thresh}$ that bimodality broadens the observed radius
+distribution enough to wash out the step, and the posterior tips
+slightly toward the flat model.  P5 shows the mirror-image effect:
+FLAME covers most of the sample there, so the uniform fill only
+touches $\approx 21\,\%$ of the stars, and its younger tail
+\emph{sharpens} the step by adding a handful of strongly-inflated
+hot-side planets.
+
+The \texttt{flat} mode --- uniform ages everywhere --- gives the
+strongest P4 signal ($\ln\Delta Z\approx 62$) because a uniform
+distribution keeps the sample-averaged age around $5\,\mathrm{Gyr}$,
+slightly younger than the FLAME pool, and produces a larger typical
+inflation ratio without any of the bimodality that hurts
+\texttt{flame\_flat}.  On P5 it is statistically indistinguishable
+from \texttt{flame\_flat}.
+
+The recovered $\hat{S}_\mathrm{thresh}$ pattern (right panel of
+\Cref{fig:plato_aguichine_age_lnk}) also carries information: on P4
+the two modes with strong evidence (\texttt{sampled} and \texttt{flat})
+recover $\hat{S}\approx 205$--$208\,\mathrm{W\,m^{-2}}$, undershooting
+the injected $280$ by ${\sim}70\,\mathrm{W\,m^{-2}}$ --- the same
+sub-fiducial pull seen in the wrr sweep at low $x_{\mathrm{H_2O}}$
+(\Cref{ssec:wrr_sweep}).  On P5 the recovery straddles the injected
+value, from $256$ (\texttt{sampled}) to $385$ (\texttt{flat}).  The
+strict-P4 outlier ($\hat{S}=584$) and flame\_flat-P4
+($\hat{S}=256$ but $\ln\Delta Z\approx 0$) both reflect the H\textsubscript{0}-preferred
+regime and should not be interpreted as physical thresholds.
+
+The practical take-away for the wider chapter is that the
+$\texttt{sampled}$ mode adopted elsewhere in the chapter (see
+\Cref{sec:steam_model,sec:composition_dependence}) is a reasonable
+default for the AGNI-family models --- where the radius does not depend
+on age --- but is not the only defensible choice for aguichine and
+similar age-sensitive prescriptions.  A future analysis of an
+aguichine-dominated population would benefit from either
+$\texttt{strict}$ (physically clean but sample-limited on P4) or a
+population-level marginalisation over the age uncertainty.
+
+\Cref{fig:plato_aguichine_age_panels} shows the detected planet sample
+for one representative trial per (sample, age mode), with the
+per-planet grey inflation lines from the rocky baseline to the
+Aguichine radius.  The visual differences between the modes are
+subtle: the underlying stellar catalogue is the same; only the
+assigned ages differ, and the Aguichine radius varies only
+${\sim}0.05\,\Rearth$ across the tabulated 0.1--20 Gyr range for
+typical intermediate-mass planets.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_aguichine_age_lnk}
+    \caption[Aguichine age-mode sweep: $\ln\Delta Z$ and $\hat{S}_\mathrm{thresh}$]{%
+        Left: Bayes factor $\ln\Delta Z$ as a function of the age-assignment
+        mode for P4 (blue) and P5 (red) with the \texttt{aguichine} steam
+        prescription.  Right: the corresponding posterior-median of the
+        recovered runaway-GH threshold $\hat{S}_\mathrm{thresh}$; the
+        dotted horizontal line is the injected value
+        $280\,\mathrm{W\,m^{-2}}$.  In both panels each marker is the
+        median of $10$ independent noise realisations and the shaded
+        band spans the $16$--$84\,\%$ range of those draws.  All non-age
+        pipeline parameters are as listed in
+        \Cref{tab:aguichine_age_params}.}
+    \label{fig:plato_aguichine_age_lnk}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_aguichine_age_panels}
+    \caption[Aguichine age-mode sweep: detected planet samples]{%
+        Detected planet sample for P4 (top row) and P5 (bottom row) at
+        each of the four age-assignment modes (columns; representative
+        trial per mode).  Vertical grey lines connect each planet's
+        rocky baseline radius to its Aguichine-inflated radius,
+        illustrating the small age-dependent contraction envelope
+        (${\sim}0.05\,\Rearth$ over $0.1$--$20\,\mathrm{Gyr}$ for
+        intermediate-mass planets).  Titles quote $N$, the cold /
+        inflated planet counts, and the recovered $\ln\Delta Z$ for
+        the shown trial.}
+    \label{fig:plato_aguichine_age_panels}
+\end{figure}
+
+% Figures produced by:
+%   Src/figures/plato_aguichine_age_analysis.py
+%     → Figures/generated/plato_aguichine_age_lnk.pdf
+%     → Figures/generated/plato_aguichine_age_panels.pdf
+%
+% The original single-seed representative scatter figure (Fig 6.6 above)
+% remains as `plato_aguichine_hzied` and is produced by
+%   Src/figures/plato_steam_models_hzied.py.
+
+
+\subsection{Pierrehumbert Hycean model}
+\label{ssec:pierrehumbert}
+
+\textcite{Pierrehumbert2022} describes runaway greenhouse conditions for
+ocean planets with a hydrogen-dominated atmosphere overlying a
+condensed-water or supercritical-water interior — so-called Hycean
+worlds.  The runaway greenhouse threshold for this scenario lies at a
+substantially higher instellation than for rocky planets:
+$S_\mathrm{thresh} = 435\,\mathrm{W\,m^{-2}}$ \parencite{Innes2023},
+compared to $280\,\mathrm{W\,m^{-2}}$ for the rocky prescriptions.
+The applicable mass range is $M \in [1.5,\,9]\,\Mearth$.
+
+The higher $S_\mathrm{thresh}$ and narrower mass range reduce the sample
+sizes ($N = 64$ for P4, $N = 127$ for P5), but the \HZIED signal is
+exceptionally strong: P4 yields $\ln\Delta Z = 149.9$, the highest of all
+models tested.  The origin is the large predicted radius inflation for
+Hycean worlds — a planet crossing the $435\,\mathrm{W\,m^{-2}}$ threshold
+swells from a dense water-rich interior to a fully steam-dominated
+configuration, producing a radius step far larger than in the rocky
+models.  P5 is also strongly detected ($\ln\Delta Z = 35.9$).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_hycean_pierrehumbert_hzied}
+    \caption[HZIED with Pierrehumbert Hycean model]{%
+        Detected planet sample for P4 (left) and P5 (right) using the
+        \textcite{Pierrehumbert2022} Hycean prescription,
+        $M \in [1.5,\,9]\,\Mearth$, $S_\mathrm{thresh} = 435\,\mathrm{W\,m^{-2}}$,
+        depth $\geq 60\,\mathrm{ppm}$.
+        P4: $N=64$, $\ln\Delta Z = 149.9$.
+        P5: $N=127$, $\ln\Delta Z = 35.9$.}
+    \label{fig:plato_hycean_pierrehumbert_hzied}
+\end{figure}
+
+
+\subsection{Hybrid rocky--Hycean model}
+\label{ssec:hycean_mixed}
+
+The hybrid model introduces two free parameters that together encode the
+unknown Hycean prevalence in the planet population.
+
+\paragraph{Free parameters.}
+\begin{itemize}
+    \item $f_\mathrm{hycean} \in [0,1]$: the fraction of planets in the
+    Hycean mass range $M \in [1.5,\,9]\,\Mearth$ that are treated as
+    Hycean worlds.  The complementary fraction $1-f_\mathrm{hycean}$
+    follows the \texttt{agni\_updated} rocky prescription.
+    $f_\mathrm{hycean} = 0$ recovers the pure \texttt{agni\_updated} result;
+    $f_\mathrm{hycean} = 1$ is the maximally Hycean scenario.
+    \item $S_\mathrm{thresh,\,Hycean}$: the runaway greenhouse instellation
+    threshold for Hycean planets.  Following \textcite{Innes2023}, this
+    is set to $435\,\mathrm{W\,m^{-2}}$, substantially higher than the
+    rocky threshold of $280\,\mathrm{W\,m^{-2}}$.  Planets with
+    $S_\mathrm{abs} \in [280,\,435]\,\mathrm{W\,m^{-2}}$ are therefore
+    classified differently depending on whether they are rocky or Hycean:
+    hot and inflated under the rocky model, but cool and uninflated under
+    the Hycean model.
+\end{itemize}
+
+The total observable mass range is $M \in [0.5,\,20]\,\Mearth$, with the
+rocky \texttt{agni\_updated} model applying to all planets and the Hycean
+override applying to the randomly selected $f_\mathrm{hycean}$ fraction
+of $M \in [1.5,\,9]\,\Mearth$ planets.
+
+\paragraph{Dependence on $f_\mathrm{hycean}$.}
+\Cref{fig:plato_hycean_fraction_lnk} shows how the Bayes factor
+$\ln\Delta Z$ (left panel) and the recovered runaway-GH threshold
+$\hat{S}_\mathrm{thresh}$ (right panel) vary with $f_\mathrm{hycean}$
+for P4 and P5.  Each marker is the median across $10$ independent
+noise realisations and the shaded band gives the 16--84\,\% range,
+capturing the combined jitter from measurement-noise draws and dynesty
+variance at $n_\mathrm{live}=100$ (see \Cref{ssec:wrr_sweep} for the
+same construction on the water-content sweep).
+
+For both samples the median evidence rises monotonically with
+$f_\mathrm{hycean}$.  On P4 the growth is modest (from
+$\ln\Delta Z \approx 49$ at $f_\mathrm{hycean}=0$ to $\approx 95$ at
+$f_\mathrm{hycean}=1$, a factor of $\approx 2$), because M-dwarf HZ
+planets sit at much smaller absolute instellations than $435\,\mathrm{W\,m^{-2}}$
+and only a modest number are reclassified when the Hycean threshold is
+imposed.  On P5 the gain is dramatic (from $\approx 18$ to $\approx 216$,
+a factor of $\approx 12$): a large fraction of FGK-star planets sits in
+the reclassification window $S_\mathrm{abs}\in[280,\,435]\,\mathrm{W\,m^{-2}}$
+and is shifted from the inflated to the uninflated side as
+$f_\mathrm{hycean}$ grows, producing a sharper effective step at the
+Hycean threshold that is easier to detect.
+
+The recovered $\hat{S}_\mathrm{thresh}$ tells a complementary and
+somewhat unexpected story.  At $f_\mathrm{hycean}=0$ both samples
+recover values close to the injected rocky threshold
+($\hat{S}_\mathrm{thresh}=246\,\mathrm{W\,m^{-2}}$ on P4,
+$259\,\mathrm{W\,m^{-2}}$ on P5), with the same slight undershoot
+seen in \Cref{ssec:wrr_sweep}.  As $f_\mathrm{hycean}$ increases the
+posterior median migrates upward on both samples, but for
+$f_\mathrm{hycean}\geq 0.5$ it settles \emph{well above} the injected
+Hycean threshold of $435\,\mathrm{W\,m^{-2}}$: the P5 sample recovers
+$\hat{S}_\mathrm{thresh}\approx 788\,\mathrm{W\,m^{-2}}$ at
+$f_\mathrm{hycean}=0.5$ and $\approx 550$--$600\,\mathrm{W\,m^{-2}}$
+at $f_\mathrm{hycean}\in\{0.75,\,1\}$; P4 similarly overshoots to
+$\approx 590$--$880\,\mathrm{W\,m^{-2}}$.  This is not a failure of
+recovery so much as a limit of the single-step hypothesis: for high
+$f_\mathrm{hycean}$ the true population has \emph{two} effective steps
+(the residual rocky one at $280\,\mathrm{W\,m^{-2}}$ and the Hycean one
+at $435\,\mathrm{W\,m^{-2}}$) plus a systematically larger Hycean
+baseline radius, and a single-parameter step function is forced to
+compromise by placing itself where the local radius contrast against
+the fitted baseline is maximised — typically hotter than either
+injected threshold.  Practically this means that a decisive detection
+($\ln\Delta Z \gg 5$) does \emph{not} imply an accurate
+$\hat{S}_\mathrm{thresh}$ when the underlying composition mix is
+non-trivial; a two-population Bayesian model would be required to
+disentangle the two thresholds.
+
+\Cref{fig:plato_hycean_fraction_panels} shows the detected planet
+sample for $f_\mathrm{hycean} \in \{0,\,0.5,\,1\}$: the vertical grey
+inflation lines lengthen and shift rightward as $f_\mathrm{hycean}$
+increases, visually reflecting both the higher Hycean
+$S_\mathrm{thresh}$ and the larger steam-atmosphere increment.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_hycean_fraction_lnk}
+    \caption[$\ln\Delta Z$ and recovered $\hat{S}_\mathrm{thresh}$ vs Hycean fraction]{%
+        Left: Bayes factor $\ln\Delta Z$ as a function of the Hycean
+        fraction $f_\mathrm{hycean}$ for P4 (blue) and P5 (red).
+        Right: the corresponding posterior-median of the recovered
+        runaway-GH threshold $\hat{S}_\mathrm{thresh}$; the two
+        dotted/dashed horizontal lines mark the rocky value
+        $280\,\mathrm{W\,m^{-2}}$ and the Hycean value
+        $435\,\mathrm{W\,m^{-2}}$ \parencite{Innes2023}.  In both panels
+        each marker is the median of $10$ independent noise realisations
+        and the shaded band spans the 16--84\,\% range of those draws.
+        Depth $\geq 60\,\mathrm{ppm}$, $M \in [0.5,\,20]\,\Mearth$.}
+    \label{fig:plato_hycean_fraction_lnk}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_hycean_fraction_panels}
+    \caption[Detected planet sample for key Hycean fractions]{%
+        Detected planet sample for P4 (top row) and P5 (bottom row) at
+        $f_\mathrm{hycean} \in \{0,\,0.5,\,1\}$ (left to right).
+        Vertical grey lines connect each inflated planet's pre-inflation
+        radius to its observed radius, showing the amplitude of the
+        steam-atmosphere increment per model.
+        $f_\mathrm{hycean}=0$ is equivalent to the pure
+        \texttt{agni\_updated} prescription.}
+    \label{fig:plato_hycean_fraction_panels}
+\end{figure}
+
+% Figures produced by:
+%   Src/figures/plato_steam_models_hzied.py  →  Figures/generated/plato_*_hzied.pdf
+%   Src/figures/plato_hycean_fraction_sweep.py
+%       → Figures/generated/plato_hycean_fraction_lnk.pdf
+%       → Figures/generated/plato_hycean_fraction_panels.pdf
+
+

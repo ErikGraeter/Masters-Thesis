@@ -1,0 +1,38 @@
+\chapter{Summary of forecasts}
+\label{chap:results_summary}
+
+This chapter consolidates the sensitivity studies of
+\Cref{chap:steam_sensitivity} and \Cref{chap:parameter_sensitivity}
+into a single comparison of forecast scenarios, identifying which
+combinations of physical assumptions place the \HZIED detection
+into the moderate, strong, or decisive evidence regime for the
+\PLATO P4 and P5 samples.  Figures in this chapter are produced by
+\texttt{Src/figures/ch10\_summary.py}.
+
+
+\section{Summary of Model Dependence}
+\label{sec:model_summary}
+
+This final section consolidates the individual sensitivity results of
+\Cref{sec:steam_model,sec:composition_dependence,sec:mass_dependence,sec:other_parameters}
+into a compact comparison across all tested scenarios.
+
+% TODO --- scientific question:
+%   Across the full set of tested (sample, steam prescription, composition,
+%   mass range, precision) configurations, which combinations preserve a
+%   detectable HZIED signal and which erase it?
+%
+% TODO --- plots / tables:
+%   (i)  Master comparison table (one row per (sample, steam prescription,
+%        composition, mass range) combination). Suggested columns:
+%
+%        Model | PLATO sample | Steam prescription | Composition |
+%        Mass range | N planets | N cold-side | Δln Z
+%
+%   (ii) One summary figure showing recovered Δln Z across the major model
+%        axes (e.g. a grouped bar plot or a heat-map).
+%
+% TODO --- data source:
+%   Aggregated from the results of the preceding sections. Each row
+%   corresponds to a single run of run_hzied_analysis with the
+%   corresponding parameter combination.

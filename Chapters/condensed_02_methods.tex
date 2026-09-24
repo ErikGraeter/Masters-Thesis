@@ -1,0 +1,31 @@
+% ============================================================
+% Chapter 2 — Methods and Setup
+% Combines: 03_methodology + 05_plato_mission + 06_setup_validation
+% ============================================================
+
+% --- Ch03: Bioverse pipeline (already chapter-level, include directly) ---
+\input{Chapters/03_methodology}
+
+% --- Ch05: PLATO mission and target samples (demote chapter→section) ---
+\let\savedchapterE\chapter
+\let\savedsectionE\section
+\let\savedsubsectionE\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/05_plato_mission}
+\let\chapter\savedchapterE
+\let\section\savedsectionE
+\let\subsection\savedsubsectionE
+
+% --- Ch06: Pipeline validation (demote chapter→section) ---
+\let\savedchapterF\chapter
+\let\savedsectionF\section
+\let\savedsubsectionF\subsection
+\let\chapter\section
+\let\section\subsection
+\let\subsection\subsubsection
+\input{Chapters/06_setup_validation}
+\let\chapter\savedchapterF
+\let\section\savedsectionF
+\let\subsection\savedsubsectionF

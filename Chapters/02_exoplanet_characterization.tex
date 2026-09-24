@@ -1,93 +1,233 @@
 \chapter{The Habitable Zone and the HZIED Test}
 \label{chap:exoplanet_characterization}
 
+This chapter sets up the physics the rest of the thesis will use.
+\Cref{sec:habitable_zone} defines the classical habitable zone and
+locates its inner edge at the runaway greenhouse threshold.
+\Cref{sec:hzied_framework} defines the \HZIED test itself --- the
+specific hypothesis that \textcite{Schlecker2024} proposed and this
+thesis extends.  The observational technique (transit photometry)
+and the empirical demographic backdrop that the test is applied to
+are the subject of \Cref{chap:kepler_tess}.
 
-We now aim to setup the physics and observational vocabulary for this work. \Cref{sec:habitable_zone} defines the classical
-habitable zone and locates its inner edge at the runaway greenhouse
-threshold.  \Cref{sec:transit_method} covers the transit method and the
-precision it delivers on radii of small planets.
-\Cref{sec:small_planet_demographics} sketches the small-planet
-population.  \Cref{sec:hzied_framework} closes by defining
-the \HZIED test itself, the specific hypothesis that
-\textcite{Schlecker2024} proposed and this thesis extends.
 
-% (write section body here)
-
+% =======================================================================
 \section{Habitable Zone}
 \label{sec:habitable_zone}
 
+The habitable zone is the annulus around a star within which an
+Earth-analog planet --- Earth-mass, Earth-composition, with a
+CO$_2$/H$_2$O/N$_2$ atmosphere regulated by a functioning
+carbonate--silicate cycle --- can sustain a global body of liquid water
+at its surface \parencite{Kasting1993,Kopparapu2013}.  It is bounded
+on the inside by the runaway greenhouse limit, at which a
+water-saturated atmosphere can no longer radiate the incoming stellar
+flux to space, and on the outside by the maximum-greenhouse limit, at
+which CO$_2$ condenses out of the atmosphere before the greenhouse
+effect can compensate for the reduced insolation.  Both boundaries
+are theoretical rather than observed: they emerge from 1D
+radiative--convective climate models calibrated to Earth's atmospheric
+chemistry.  The concept as it stands has been tested on a single
+planetary system --- our own --- and its wider validity is one of the
+open questions of astrobiology \parencite{CatlingZahnle2020}.
 
-With the habitable zone we refer to the circumstellar region where a earth-like rocky planet (holding a CO$_2$/H$_2$O/N$_2$ atmosphere regulated by a functioning
-carbonate--silicate cycle) can sustain an amount of liquid surface water \parencite{Kasting1993,Kopparapu2013} \openquestion{Is this definition correct?}.
-It is bounded by the inner edge where a water-saturated atmosphere can no longer radiate the incoming stellar flux (instellation) back to space, and the runaway greenhouse effect sets in.
-The outer side is bounded by the classical maxium-greenhouse limit of \textcite{Kasting1993} and \textcite{Kopparapu2013}:
+The outer edge deserves a brief comment because this thesis will
+otherwise ignore it.  Unlike the inner edge, the outer boundary does
+not represent a catastrophic atmospheric instability but rather the
+point at which a self-regulating climate feedback runs out of range.
 
-CO$_2$ condenses out of the atmosphere and the greenhouse effect is no longer sufficient to keep the surface temperature above the freezing point of water \parencite{Kopparapu2013}.
-Both boundaries, functions of stellar type and atmospheric composition, are  theoretical rather then observed. They emerge from 1D radiative-convective \openquestion{what is this exactly; worth mentioned here?} climate models assuming earth-like compositions.
+On timescales longer than ${\sim}\,10^6$ years, atmospheric
+CO$_2$ on an Earth-like planet is controlled by the
+carbonate--silicate cycle.  Silicate rocks are weathered by
+CO$_2$-bearing rainwater; the dissolved products are eventually buried
+as carbonate sediments on the ocean floor; subduction and metamorphism
+then return CO$_2$ to the atmosphere via volcanism.  The critical
+feature of this cycle is that weathering rates are temperature
+sensitive: a cooler planet weathers more slowly, so volcanic CO$_2$
+accumulates.  A planet receiving less stellar flux therefore responds
+by building up a denser CO$_2$ greenhouse, which partly compensates
+for the cooling.  This negative feedback acts as a long-term planetary
+thermostat \parencite{Kasting1993}.
+
+The thermostat has a physical ceiling.  As the atmospheric CO$_2$
+partial pressure rises, two competing effects overtake the warming.
+First, the outgoing infrared flux saturates: once the atmosphere is
+optically thick at all infrared wavelengths, adding more CO$_2$
+cannot trap additional heat.  Second, CO$_2$ is an efficient Rayleigh
+scatterer of incoming starlight, so a denser atmosphere reflects a
+larger fraction of the incident flux back to space, reducing the
+energy available to warm the surface.  The greenhouse warming and
+the albedo cooling therefore pull in opposite directions, and the
+net heating reaches a maximum --- the maximum-greenhouse limit ---
+at a CO$_2$ partial pressure of roughly 8\,bar, beyond which adding
+more CO$_2$ cools rather than warms the planet \parencite{Kasting1993}.
+For a solar-analog host, \textcite{Kopparapu2013} place this limit at
+$S_\mathrm{eff}\approx 0.36$ (${\sim}\,1.67\,\mathrm{AU}$), roughly a
+factor of three further from the star than the inner edge.  Once the
+thermostat is exhausted the surface freezes, ice raises the planetary
+albedo further, and the planet enters a state of runaway glaciation.
+
+Unlike the runaway greenhouse, this transition is gradual rather than
+catastrophic.  It can be shifted substantially by non-condensing greenhouse gases.
+Primordial H$_2$--He mixtures accreted from a protoplanetary disk can
+maintain above-freezing surface temperatures out to 10\,AU around a
+G-type star \parencite{PierrehumbertGaidos2011}.  More relevant to
+long-lived habitable worlds, \textcite{RamirezKaltenegger2017} showed
+that continuous volcanic outgassing of H$_2$ can extend the outer edge
+to ${\sim}\,2.4\,\mathrm{AU}$ in our solar system, and CH$_4$ from
+volcanism increases the outer-edge distance by ${\sim}\,8\,\%$ for a
+solar-analog host (see \textcite{Ramirez2018} for a review).
+Most importantly for this thesis, the outer transition leaves no
+clean signature on the transit-radius plane.  A cold rocky planet
+near the maximum-greenhouse limit has essentially the same bulk radius
+as its temperate counterpart: no atmospheric phase transition alters
+its envelope mass or structure in a detectable way.  The runaway
+greenhouse, by contrast, inflates transit radii by tens of percent
+(\Cref{sec:hzied_framework}).  The \HZIED test therefore focuses
+exclusively on the inner edge, and the outer boundary appears in
+the rest of this thesis only as context.
+
+The inner edge is the focus of this thesis and deserves the more
+careful treatment.  Following the seminal calculations of
+\textcite{Nakajima1992}, and their revision with modern water-vapour
+opacities by \textcite{Goldblatt2013}, the outgoing longwave radiation
+of a saturated water-vapour atmosphere asymptotes to a maximum value
+as the surface temperature increases --- the Simpson--Nakajima limit
+introduced in \Cref{chap:introduction}.  Above this ceiling, no
+steady state in radiative--convective equilibrium can balance the
+incoming stellar flux while maintaining a liquid ocean: the surface
+climbs to silicate-melting temperatures and the planet enters a
+steam-atmosphere-over-magma-ocean state.  The 3D radiative-hydrodynamic
+simulations of \textcite{Leconte2013}, \textcite{Turbet2021}, and
+\textcite{Chaverot2023} refine the numerical value of the threshold
+(with clouds, rotation, and day--night asymmetry the threshold shifts
+by tens of percent) but confirm the qualitative picture.
+
+Two conversions between the different flux units used in the
+literature matter for the rest of the thesis and are worth spelling
+out explicitly.  The globally averaged absorbed flux $S_\mathrm{abs}$
+is the fraction of top-of-atmosphere stellar radiation not reflected
+back to space, averaged over the planet's spherical surface:
+%
+\begin{equation}
+    S_\mathrm{abs} = \frac{1-A}{4}\, S_\mathrm{TOA},
+    \label{eq:sabs_stoa}
+\end{equation}
+%
+where $A$ is the Bond albedo and $S_\mathrm{TOA}$ is the
+top-of-atmosphere insolation.  The factor of four converts the disk
+cross-section that intercepts the stellar beam ($\pi R_p^2$) to the
+total surface area of the sphere ($4\pi R_p^2$), and the factor
+$(1-A)$ removes the reflected fraction.  For a solar-type host and a
+Bond albedo close to Earth's ($A=0.30$), the runaway threshold
+$S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$ of absorbed radiation
+corresponds to $S_\mathrm{TOA}\approx 1.2\,\Searth$, or equivalently a
+semi-major axis $a\approx 0.95\,\mathrm{AU}$.  This matches the
+runaway-greenhouse effective flux $S_\mathrm{eff}=1.107$ tabulated by
+\textcite{Kopparapu2013} for a solar-analog host once their slightly
+different Bond albedo is factored in.
+
+The threshold depends on the spectrum of the incident stellar
+radiation.  Cooler M-dwarf hosts emit a larger fraction of their
+light at wavelengths at which water vapour absorbs strongly --- the
+same coupling that drives the runaway feedback in the first place ---
+so the M-dwarf HZ inner edge sits at a lower absorbed flux than the
+solar-type edge.  The \textcite{Kopparapu2014} calculations place the
+M0V limit at $S_\mathrm{eff}\approx 1.06$ (versus $1.107$ for solar
+type), and the shift grows for later M-type hosts.  For the
+FGK-dominated \PLATO samples analysed in \Cref{chap:results} the
+spectral-type shift is at the few-percent level and can safely be
+absorbed into a single fiducial $S_\mathrm{thresh}=280\,\mathrm{W\,m^{-2}}$;
+for the M-dwarf-dominated P4 sample it is a larger correction that
+motivates the mixed-population variant of \Cref{ssec:hycean_mixed}.
+
+Two qualifications of the concept close the section.  First, the
+Earth-analog atmospheric assumption is doing a great deal of the
+work.  Variations in planetary rotation rate, cloud fraction,
+atmospheric H$_2$/He inventory, or interior degassing history can
+shift the HZ boundaries by tens of percent
+\parencite{Turbet2021,Chaverot2023}.  Second, and as already
+foregrounded in \Cref{chap:introduction}, the entire concept is
+calibrated on Earth itself and has never been experimentally tested
+as a predictive framework.  The runaway-greenhouse transition, as a
+specific prediction of the same climate models, is however
+observationally accessible on populations of exoplanets --- and that
+is what the rest of this chapter builds up to.
 
 
-Unlike the inner edge, the outer edge is not a sharp threshold but rather
-a gradual transition from habitable to uninhabitable conditions.  It can be
-extended by non-condensing greenhouse gases: primordial H$_2$--He mixtures
-accreted from protoplanetary disks can prevent the surface from freezing
-\parencite{PierrehumbertGaidos2011}, while continuous volcanic outgassing of
-H$_2$ pushes the classical outer edge to ${\sim}\,2.4\,\mathrm{AU}$ in the solar
-system \parencite{RamirezKaltenegger2017}.  Volcanic CH$_4$ can similarly widen
-the outer HZ by ${\sim}\,8\,\%$ for a solar-analog host, though it cools rather
-than warms atmospheres around cooler M-dwarfs (see \textcite{Ramirez2018} for a
-review).
-
-
-Most importantly for this thesis, the outer transition leaves no clean signature
-on the transit-radius plane.  A cold rocky planet near the maximum-greenhouse
-limit has essentially the same bulk radius as its temperate counterpart: no
-atmospheric phase transition alters its envelope mass or bulk structure in a
-detectable way.
-he runaway greenhouse, by contrast, inflates transit radii by
-tens of percent (\Cref{sec:hzied_framework}), producing a step function in the
-population-averaged radius distribution.  The \HZIED test therefore focuses
-exclusively on the inner edge, and the outer boundary appears in the rest of
-this thesis only as context.
-
+% =======================================================================
 \section{The Habitable Zone Inner-Edge Discontinuity}
 \label{sec:hzied_framework}
 
-% (write section body here)
+The \HZIED is the statistical signature of the runaway greenhouse
+transition on the transit-radius distribution of a small-planet
+population.  The claim can be stated in three lines: (i) a wet rocky
+planet crossing the runaway threshold $S_\mathrm{thresh}$ inflates
+its transit-observable radius by tens of percent (physics laid out in
+\Cref{chap:introduction} and \Cref{sec:habitable_zone} above); (ii) at
+fixed water inventory this radius change is a step function of
+instellation; and (iii) the step survives averaging over an entire
+planet population even though individual planet radii are noisy.
+Detecting it would constitute the first observational detection of
+the runaway greenhouse transition in an exoplanet population.
 
-The HZIED is the statistical signature of the runaway greenhouse effect on the transit-radius of a population of small planets.
-This claim could be divided into three lines: (i) a small rocky planet with an amount of surface water crossing the runaway threshold $S_\mathrm{thresh}$ inﬂates its transit-observable radius by tens of percent ; (ii) at a fixed water inventory, the change of radius reveals a step function in instellation S and (iii) this step function survives averaging over an entire population of rocky planets depsite noisy detection. The detection of the HZIED would therefore be a strong evidence for the runaway greenhouse transition on exoplanets.
+The signal was first assembled into a testable prediction by
+\textcite{Schlecker2024}.  Using the \textsc{Bioverse} pipeline of
+\textcite{BixelApai2021}, they built a synthetic transiting-planet
+catalogue from a Gaia stellar sample and the \textcite{Bergsten2022}
+occurrence-rate priors, injected the radius inflation prescription of
+\textcite{Turbet2020} (with the water-retention correction of
+\textcite{DornLichtenberg2021}) into hot-side planets with a
+probability $f_\mathrm{rgh}$, and asked how large a survey would need
+to be to distinguish the resulting step in mean radius from a flat
+null.  This thesis inherits that framework and broadens the model
+space along two axes: alternative interior-composition prescriptions
+\parencite{Aguichine2021} and hydrogen-dominated (``Hycean'')
+atmospheres \parencite{Pierrehumbert2022,Innes2023}, both of which
+alter the location and amplitude of the step.  The full
+implementation --- pipeline, mass--radius grids, water-inventory
+priors, and Bayesian test variants --- is deferred to
+\Cref{chap:methodology}.
 
+The vocabulary introduced here reappears in every subsequent chapter:
+$S_\mathrm{thresh}$ for the runaway threshold, $x_{\mathrm{H_2O}}$
+for the water inventory, $f_\mathrm{rgh}$ for the runaway-greenhouse
+fraction, and $\ln\Delta Z$ for the log-Bayes factor between the step
+hypothesis $H_1$ and the flat null $H_0$.  \Cref{chap:results} plots
+$\ln\Delta Z$ against each of the injection parameters in turn.
 
+\Cref{fig:generic_reproduction} closes the section by reproducing
+the original \textcite{Schlecker2024} detection on the generic
+Gaia-based synthetic sample used by that paper.  It confirms that
+the framework recovers the injected radius step at very high
+significance under the paper's own assumptions, and provides the
+in-principle reference point against which the \PLATO-specific
+forecasts of \Cref{chap:results} are compared.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{generic_reproduction}
+    \caption[Schlecker+2024 reproduction on the generic Gaia sample]{%
+        Reproduction of the \textcite{Schlecker2024} baseline
+        detection on the generic Gaia-based synthetic sample
+        ($N = 500$, $\sigma_R = 2\%$, $\sigma_S = 5\%$).  Injection
+        parameters: $S_\mathrm{thresh} = 280\,\mathrm{W\,m^{-2}}$,
+        $x_{\mathrm{H_2O}} = 0.005$, $f_\mathrm{rgh} = 0.8$;
+        \textcite{Turbet2020} steam grid with the
+        \textcite{DornLichtenberg2021} water-retention correction.
+        Individual observed radii (crosses), rolling SMA
+        ($w = 25$, blue band, empirical per-bin uncertainty), and
+        posterior draws from the step model (red curves) are shown.
+        The vertical dashed line marks the injected
+        $S_\mathrm{thresh}$.  The paper's headline configuration is
+        recovered with $\ln\Delta Z \gg 1$, confirming that the
+        pipeline reproduces the framework of \textcite{Schlecker2024}
+        under identical inputs.}
+    \label{fig:generic_reproduction}
+\end{figure}
 
-Three physical ingredients had to be assembled before the idea became
-a testable prediction.  \textcite{Turbet2019} first pointed out that
-a steam-dominated atmosphere on a runaway planet is transit-observable,
-with a radius inflation of tens of percent for Earth-mass planets.
-\textcite{Turbet2020} then computed a full mass--radius grid for
- rocky planets more irradiated than the runaway greenhouse
-limit, tabulating the inflated transit radius as a function of planet
-mass and water mass fraction $x_{\mathrm{H_2O}}$.
-\textcite{DornLichtenberg2021} added the constraint that a substantial
-fraction of the outgassed water dissolves back into the silicate melt
-during the magma-ocean phase and does not contribute to the
-atmospheric expansion, reducing the effective radius inflation by up to a
-factor of two at $x_{\mathrm{H_2O}} \sim 10^{-2}$.  Together these
-three form the ``Turbet+2020 with Dorn--Lichtenberg (DL) correction'',
-forming the original \HZIED framework.
+% Figure produced by:
+%   Src/figures/generic_reproduction.py
+%   → Figures/generated/generic_reproduction.pdf
 
-
-
-
-
-% (write section body here)
-\section{Transit Method}
-\label{sec:transit_method}
-
-% (write section body here)
-
-\section{Small-Planet Demographics}
-\label{sec:small_planet_demographics}
-
-% (write section body here)
 

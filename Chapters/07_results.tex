@@ -1,139 +1,113 @@
-\chapter{Results}
+\chapter{A baseline HZIED forecast for PLATO}
 \label{chap:results}
 
 % (write section body here)
 
-\section{Reproduction of Schlecker et al.\ (2024)}
+\section{Planet yield across the PLATO samples}
+\Cref{fig:plato_sample_counts} shows the simulated detectable-planet yield across the five \PLATO samples on the radus-instellation plane. While P3 was removed form PLATO mission due to historical reasons, P4 and P5 (M-dwarfs and faint-FGK dwarfs) provide a sufficient number of detectable rocky planets for the HZIED analysis. In contrast, the P4 M-dwarf sample and the P5 faint-FGK sample each provide a sufficient number of planets that could enter the analysis.
+
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{plato_sample_counts}
+    \caption[Detectable-planet radius--instellation scatter across the PLATO samples]{%
+        Detectable planets in each \PLATO sample generated using bioverse pipeline.
+        with an optimistic detection threshold of $\delta\geq 60\,\mathrm{ppm}$,
+        $M\leq 5\,\Mearth$) within a 6-year mission duration. Note that in the following further planets could enter the analysis, when crossing the detection threshold $\delta\geq 60\,\mathrm{ppm}$ due to an injected radius inflation}. The
+        vertical dashed line marks $S_\mathrm{thresh}$ where we later inject the radius inflation.
+    \label{fig:plato_sample_counts}
+\end{figure}
+
+% Figure produced by:
+%   Src/figures/ch07_results.py --figure plato_sample_counts
+%   → Figures/generated/plato_sample_counts.pdf
+
+
+
+
+% (write section body here)
+
+\section{The \textcite{Schlecker2024} fiducial as a baseline for PLATO}
 \label{sec:reproduction}
+The first PLATO specific test replicates the \textcite{Schlecker2024}
+fiducial model on the real target populations. We generate again a population of planets in the radius--instellation plane, and inject a radius inflation at $S_\mathrm{thresh} = 280 W m^{-2}$ according to the \textcite{Turbet2020} steam
+mass--radius grid for a fraction of 0.8 of all planets,and apply a \textcite{DornLichtenberg2021} water-retention correction (DL-correction). The water-to-rock ratio is set to 0.005. First, the tabulation of
+\textcite{Turbet2020} covers only rocky planet masses between $M \in [0.1,\,2.05]\,\Mearth$; above $2.05\,\Mearth$ the model
+provides no steam-atmosphere radius, so the observable cuts of restrict the analysis to that same range and
+any hot-side planet heavier than $2.05\,\Mearth$ is dropped from the
+sample. This mass ceiling makes the comparison directly reproducible with \textcite{Schlecker2024}, since the same population of planets is generated, but with exchanged stellar catalogue. \Cref{fig:schlecker_on_plato} shows the resulting
+radius--instellation distributions with the SMA band and posterior
+draws overlaid.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{schlecker_on_plato}
+    \caption[Schlecker+2024 fiducial on PLATO P4 and P5]{%
+        The \textcite{Schlecker2024} fiducial model
+        (\textcite{Turbet2020} steam grid with DL--correction
+        \textcite{DornLichtenberg2021})
+        applied to the real \PLATO P4 and P5 target samples. The
+        recovered log-Bayes factor is quoted in each panel title.}
+    \label{fig:schlecker_on_plato}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{schlecker_seed_variation}
+    \caption[Seed-variation robustness of the Schlecker+2024 fiducial on PLATO]{%
+        Distribution of recovered $S_\mathrm{thresh}$ across 100 independent
+        noise and population realisations of the \textcite{Schlecker2024}
+        fiducial model applied to \PLATO P4 (left), P5 (centre), and the
+        combined P4$+$P5 catalogue (right).  Each realisation draws a new
+        planet population and noise seed; the histogram shows the point of highest posterior density, $S_\mathrm{thresh}$, per trial and the Kernel Density Estimate (KDE), smooth curve over the histogram is overlaid. The
+        mean log-Bayes factor $\langle\ln\Delta Z\rangle \pm \sigma$ is
+        quoted in each panel title.  The combined sample is the most robust,
+        with $\ln\Delta Z > 4$ in each trial.}
+    \label{fig:schlecker_seed_variation}
+\end{figure}
+
 
 % (write section body here)
 
-\section{PLATO Target Samples}
-\label{sec:plato_samples}
+\section{Extending the steam model: from Turbet to AGNI}
+\label{sec:turbet_to_agni}
 
 % (write section body here)
 
-\subsection{The \PLATO Input Catalog and sample structure}
-\label{sec:pic}
-
-% (write section body here)
-
-\section{From Stellar Catalogue to Detectable Planets}
-\label{sec:planet_yield}
-
-% (write section body here)
-
-\subsection{Planet Generation}
-\label{ssec:planet_generation}
-
-% (write section body here)
-
-\subsection{Detection Cuts and Observable Sample}
-\label{ssec:detection_cuts}
-
-% (write section body here)
-
-\section{HZIED Baseline: Turbet Steam Model}
+\section{Baseline HZIED forecast for P4 and P5}
 \label{sec:hzied_plato}
 
 % (write section body here)
 
-\subsection{Relaxing the Transit Depth Threshold}
-\label{ssec:relaxed_depth}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{p4_p5_baseline}
+    \caption[\HZIED forecast under the AGNI baseline for P4, P5, and combined]{%
+        \HZIED forecast under the AGNI baseline model (AGNI-updated steam
+        table with the \textcite{DornLichtenberg2021} water-retention correction,
+        $\delta\geq 60\,\mathrm{ppm}$, $M\leq 5\,\Mearth$) for P4 alone
+        (M dwarfs, left), P5 alone (faint FGK dwarfs, centre), and the
+        combined P4$+$P5 population (right).  Scatter points are individual
+        detectable planets coloured by cold / hot-uninflated / hot-inflated
+        status; the blue band is the rolling SMA of the observed radii with
+        its $\pm 2\sigma$ interval; red curves are posterior draws from the
+        $\mathcal{H}_1$ step model.  The recovered log-Bayes factor
+        $\ln\Delta Z$ is quoted in each panel title.  Mission duration: 6\,yr.}
+    \label{fig:p4_p5_baseline}
+\end{figure}
+
+% Figure produced by:
+%   Src/figures/ch07_results.py --figure p4_p5_baseline (Document_beta)
+%   → Figures/generated/p4_p5_baseline.pdf
+
+\subsection{Robustness to population and noise realisations}
+\label{ssec:robustness}
 
 % (write section body here)
 
-\section{Dependence on the Steam Atmosphere Model}
-\label{sec:steam_model}
-
-% (write section body here)
-
-\subsection{Turbet steam table (reference)}
-\label{ssec:turbet}
-
-% (write section body here)
-
-\subsection{AGNI grid}
-\label{ssec:agni}
-
-% (write section body here)
-
-\subsection{Extended AGNI + PALEOS (\texttt{agni\_updated})}
-\label{ssec:agni_updated}
-
-% (write section body here)
-
-\subsection{Aguichine irradiated ocean planets}
-\label{ssec:aguichine}
-
-% (write section body here)
-
-\subsection{Pierrehumbert Hycean model}
-\label{ssec:pierrehumbert}
-
-% (write section body here)
-
-\subsection{Hybrid rocky--Hycean model}
-\label{ssec:hycean_mixed}
-
-% (write section body here)
-
-\section{Dependence on Planetary Water Content}
-\label{sec:composition_dependence}
-
-% (write section body here)
-
-\subsection{Fiducial water-to-rock ratio}
-\label{ssec:wrr_fiducial}
-
-% (write section body here)
-
-\subsection{Variation of the water-to-rock ratio}
-\label{ssec:wrr_sweep}
-
-% (write section body here)
-
-\subsection{Water-rich compositions}
-\label{ssec:water_rich}
-
-% (write section body here)
-
-\section{Dependence on Planet Mass and Applicability Limits}
-\label{sec:mass_dependence}
-
-% (write section body here)
-
-\section{Other Key Model Parameters}
-\label{sec:other_parameters}
-
-% (write section body here)
-
-\subsection{Runaway fraction \texorpdfstring{$f_{\mathrm{rgh}}$}{f\_rgh}}
-\label{ssec:f_rgh}
-
-% (write section body here)
-
-\subsection{Runaway threshold \texorpdfstring{$S_{\mathrm{thresh}}$}{S\_thresh}}
-\label{ssec:s_thresh}
-
-% (write section body here)
-
-\subsection{Radius measurement precision \texorpdfstring{$\sigma_R$}{sigma\_R}}
-\label{ssec:sigma_r}
-
-% (write section body here)
-
-\subsection{Observable-cut choices}
-\label{ssec:cuts}
-
-% (write section body here)
-
-\subsection{Hypothesis-test methodology}
-\label{ssec:methodology}
-
-% (write section body here)
-
-\section{Summary of Model Dependence}
-\label{sec:model_summary}
+\section{Detection significance as a function of sample size}
+\label{sec:detection_significance}
 
 % (write section body here)

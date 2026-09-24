@@ -1,179 +1,408 @@
 \chapter{Methodology}
 \label{chap:methodology}
 
+This chapter documents the tools that produce every quantitative
+result of the thesis.  \Cref{sec:bioverse} gives a high-level
+overview of the \textsc{Bioverse} statistical framework
+\parencite{BixelApai2021,Schlecker2024} that underpins the analysis
+and highlights which parts this thesis inherits and which it extends.
+The three subsequent sections walk through the pipeline in the same
+order the data flows through it.  \Cref{sec:generator} details the
+population \emph{generator}: the stellar sample, the assignment of
+synthetic planets and orbits, the runaway greenhouse radius models,
+the treatment of stellar ages, and the water-mass-fraction population
+priors.  \Cref{sec:survey_simulator} covers the \emph{survey
+simulator} that turns the underlying population into a mock observed
+catalogue.  \Cref{sec:inference_methodology} finally documents the
+two Bayesian tests used to quantify the \HZIED signal and the
+multi-seed noise-realisation treatment that every sweep figure in
+\Cref{chap:results} adopts.
 
 
 % =======================================================================
 \section{Bioverse Pipeline Overview}
 \label{sec:bioverse}
 
-% Content:
-%   - Bioverse origin: Bixel & Apai 2021, extended for HZIED by Schlecker 2024.
-%   - Three-stage architecture: Generator -> Survey Simulator -> Hypothesis Test.
-%   - Separation of concerns: generator is expensive, survey + inference are cheap;
-%     parquet-cached intermediate table sits between them.
-%   - Enumerate the four extensions this thesis makes, all inside the generator:
-%       (1) PLATO P1-P5 samples replace generic Gaia sphere
-%       (2) FLAME ages replace uniform age prior
-%       (3) four composition priors replace fixed x_H2O
-%       (4) Aguichine + Hycean extend the runaway greenhouse radius model
-%   - Survey simulator + hypothesis-testing inherited unchanged.
+The statistical framework of this thesis is built on \textsc{Bioverse},
+the exoplanet-survey simulation pipeline of \textcite{BixelApai2021}
+as extended for the \HZIED forecast by \textcite{Schlecker2024}.
+Bioverse follows a strictly sequential three-stage architecture.  A
+\emph{generator} draws a synthetic underlying population of stars
+and planets from occurrence-rate priors and injects the physical
+runaway-greenhouse radius inflation into the hot-side planets.  A
+\emph{survey simulator} then projects that ``ground truth''
+population into a mock observed catalogue by applying transit
+selection and measurement noise.  Finally, a \emph{hypothesis-testing}
+module computes the Bayesian evidence for competing demographic
+models on the mock data via nested sampling.
+
+The clean separation between the three stages has two operational
+consequences that matter for the thesis.  First, the expensive step
+is the generator: every call has to build a full stellar and
+planetary catalogue and apply the physical radius-inflation
+prescription.  The survey simulator and the inference module are
+comparatively cheap.  Intermediate parquet-cached tables therefore
+store the generated catalogue on disk between the generator and the
+inference, so that repeated Bayesian runs at different injection
+parameters or noise seeds do not incur the generator cost --- the
+mechanism that makes the multi-seed sweeps of \Cref{chap:results}
+computationally tractable.  Second, because the extensions this
+thesis introduces all live within the generator step, the survey
+simulator and the hypothesis-testing module can be inherited from
+Schlecker+2024 essentially unchanged.
+
+This thesis inherits the Bioverse framework as its baseline and
+extends it in four directions, all within the generator:
+\begin{enumerate}
+    \item the generic Gaia sphere is replaced with the observed
+        \PLATO P1--P5 target catalogues (\Cref{ssec:bioverse_stars};
+        target selection is deferred to \Cref{chap:plato_mission});
+    \item the uniform stellar-age prior is replaced with per-star
+        ages derived from Gaia DR3 FLAME isochrones
+        (\Cref{sec:age_modelling});
+    \item four alternative water-mass-fraction population priors are
+        introduced in place of the single fiducial injection value
+        of Schlecker+2024 (\Cref{sec:composition_prior}); and
+    \item the runaway-greenhouse radius model is upgraded with the
+        \textcite{Aguichine2021} and Hycean extensions
+        (\Cref{sec:runaway_models}).
+\end{enumerate}
+The survey simulator (\Cref{sec:survey_simulator}) and the
+hypothesis-testing module (\Cref{sec:inference_methodology}) are
+inherited from Schlecker+2024 unchanged.
 
 
 % =======================================================================
 \section{The Generator}
 \label{sec:generator}
 
-% Content:
-%   - Purpose: produce a "ground truth" underlying population before observational
-%     selection is applied.
-%   - Five substeps executed in sequence: stellar sample -> planets/orbits ->
-%     runaway greenhouse radius -> stellar ages -> water-mass-fraction prior.
-%   - Output: table of true planet properties handed to the survey simulator.
+The generator produces an underlying stellar and planetary population
+before any observational selection is applied.  It runs in five
+substeps: build a stellar sample (\Cref{ssec:bioverse_stars}), draw
+planets around each star from an occurrence-rate prior
+(\Cref{ssec:bioverse_planets}), apply the runaway-greenhouse radius
+inflation prescription (\Cref{sec:runaway_models}), attach stellar
+ages and derive per-planet post-runaway ages
+(\Cref{sec:age_modelling}), and draw per-planet water inventories
+from a composition prior (\Cref{sec:composition_prior}).  Its output
+is a table of ``ground truth'' planet properties on which the survey
+simulator will later impose transit selection and radius noise.
 
 
 \subsection{Stellar sample}
 \label{ssec:bioverse_stars}
 
-% Content:
-%   - Baseline: Gaia-based catalogue (Hardegree-Ullman et al. 2023) built on the
-%     GCNS (Smart et al. 2021), spherical volume d_max = 120 pc.
-%   - Stellar parameters (Teff, L, R, M) from Gaia + 2MASS photometry.
-%   - This thesis: replace generic Gaia sphere with observed PLATO P1-P5 target
-%     lists (Ch. plato_mission). Requires disabling d_max cut only.
+The baseline stellar sample of \textcite{Schlecker2024} is drawn from
+the Gaia-based catalogue of \textcite{HardegreeUllman2023}, itself
+built on the Gaia Catalogue of Nearby Stars
+\parencite{Smart2021}, and covers a spherical volume of radius
+$d_{\max}=120\,\mathrm{pc}$ around the Sun.  Effective temperatures,
+luminosities, radii, and masses are derived from Gaia $G$,
+$G_{\mathrm{BP}}$, $G_{\mathrm{RP}}$ photometry combined with 2MASS
+$K_S$ magnitudes.  \textcite{HardegreeUllman2023} report that the
+derived stellar parameters are consistent to within a few percent
+with independently measured values for known exoplanet hosts, which
+is what makes the catalogue suitable for a demographic study of
+small-planet radii.
+
+This thesis replaces the generic Gaia sphere with the observed
+\PLATO Input Catalogue P1--P5 target lists documented in
+\Cref{chap:plato_mission}.  The PLATO catalogues span a much wider
+distance range than $120\,\mathrm{pc}$, and their target selection
+is driven by asteroseismic characterisability rather than distance;
+running Bioverse on them therefore requires disabling the $d_{\max}$
+cut but leaves every other generator step untouched.
 
 
 \subsection{Planetary population and orbits}
 \label{ssec:bioverse_planets}
 
-% Content:
-%   - Bergsten et al. 2022 occurrence rate priors (Kepler-derived).
-%   - Per-star multiplicity, per-planet radius + orbital period drawn from prior.
-%   - Semi-major axis from Kepler's third law; instellation from stellar luminosity
-%     via inverse-square law.
+Each star is assigned a synthetic planetary system according to the
+occurrence-rate priors of \textcite{Bergsten2022}, which parameterise
+the per-star planet frequency as a function of planetary radius,
+orbital period, and stellar spectral type from \Kepler statistics.
+For every star Bioverse draws a per-system planet multiplicity, and
+for every planet an orbital period and a baseline radius from this
+parameterisation.  The semi-major axis follows from Kepler's third
+law using the parent star's mass, and the instellation is computed
+from the stellar luminosity via the inverse-square law.  Every
+synthetic planet therefore inherits its full stellar-parameter
+context, so that the host-dependent runaway threshold
+$S_\mathrm{thresh}$ can be evaluated self-consistently in
+\Cref{sec:runaway_models}.
 
 
 \subsection{Runaway greenhouse radius models}
 \label{sec:runaway_models}
 
-% Content:
-%   - Physical basis: Simpson-Nakajima OLR limit (Nakajima 1992, Goldblatt 2013).
-%   - Baseline: Turbet 2020 mass-radius grid + Dorn-Lichtenberg 2021 water-retention
-%     correction (Schlecker 2024's default).
-%   - Extension 1: Aguichine 2021 for water-dominated interiors (x_H2O up to ~0.5).
-%   - Extension 2: Hycean (Pierrehumbert 2022, Innes 2023) for H2-dominated
-%     atmospheres. NOTE: verify the sign and value of the Hycean threshold shift.
-%   - f_rgh injection: Bernoulli draw per hot-side planet decides whether the
-%     inflated radius is applied.
+The physical basis of the \HZIED signal is the Simpson--Nakajima
+outgoing longwave radiation limit \parencite{Nakajima1992,Goldblatt2013}:
+above a critical absorbed flux $S_\mathrm{thresh}$, no steady-state
+radiative--convective equilibrium can sustain a saturated
+water-vapour atmosphere in balance with the incoming stellar flux
+while maintaining a liquid ocean at the surface
+(\Cref{sec:habitable_zone}).  Planets crossing this threshold undergo
+a runaway greenhouse and settle into a
+steam-atmosphere-over-magma-ocean state whose transit radius is
+inflated relative to the corresponding cold-side planet by tens of
+percent.
+
+The default radius-inflation prescription used throughout this
+thesis follows \textcite{Turbet2020}, who computed a tabulated
+mass--radius grid for water-rich rocky planets more irradiated than
+the runaway greenhouse limit.  Each entry gives the inflated transit
+radius as a function of planet mass and water mass fraction
+$x_{\mathrm{H_2O}}$, spanning
+$10^{-4}\leq x_{\mathrm{H_2O}}\leq 5\times 10^{-2}$.
+\textcite{DornLichtenberg2021} added the constraint that a
+substantial fraction of the outgassed water dissolves back into the
+silicate melt during the magma-ocean phase and does not contribute
+to the atmospheric column, reducing the effective radius inflation
+by up to a factor of two at $x_{\mathrm{H_2O}}\sim 10^{-2}$.  The
+combination --- Turbet+2020 with the Dorn--Lichtenberg
+water-retention correction --- is what \textcite{Schlecker2024}
+adopted, and it remains the fiducial baseline of this thesis.
+
+Two extensions of the model space are also implemented and used in
+the sensitivity analyses of \Cref{chap:results}.  For water-dominated
+interior compositions ($x_{\mathrm{H_2O}}$ up to ${\sim}\,0.5$),
+\textcite{Aguichine2021} extended the mass--radius grid to the
+ocean-planet regime, providing an alternative prescription in which
+the transit radius is set by a supercritical-water mantle rather
+than by a steam atmosphere.  For hydrogen-dominated (``Hycean'')
+atmospheres above a supercritical water interior,
+\textcite{Pierrehumbert2022} and \textcite{Innes2023} show that the
+runaway threshold shifts to a substantially different instellation
+\openquestion{verify sign and value: Innes 2023 abstract states the
+Hycean runaway threshold is \emph{reduced} (inner edge moves from
+$\sim 1\,\mathrm{AU}$ to $1.6\,\mathrm{AU}$ for a G-star), whereas
+the current text implies an increase to
+$\sim 435\,\mathrm{W\,m^{-2}}$ --- verify against
+\textcite{Pierrehumbert2022}}, and that the resulting radius
+inflation profile is qualitatively different from the rocky case.
+\Cref{chap:results} compares these three prescriptions systematically
+on the same \PLATO forecast samples, and \Cref{ssec:hycean_mixed}
+explores a mixed population in which the rocky and Hycean
+prescriptions coexist.
+
+The runaway-greenhouse fraction $f_\mathrm{rgh}$ enters the model at
+this stage: for each hot-side planet, a Bernoulli draw with
+probability $f_\mathrm{rgh}$ decides whether the tabulated inflated
+radius is assigned in place of the baseline dry-rocky radius.
+$f_\mathrm{rgh}$ is a lump parameter absorbing the population-level
+uncertainty in whether a runaway planet retains its inflated steam
+atmosphere on gigayear timescales; setting $f_\mathrm{rgh}=1$
+represents the strong-signal limit in which every hot-side planet
+retains its steam atmosphere, while smaller values dilute the
+demographic step in proportion to the fraction of planets that have
+lost their atmosphere on the survey timescale, allowing the \HZIED
+test to remain meaningful even when atmospheric persistence is
+uncertain.
 
 
-\subsection{Stellar ages and time-since-runaway}
-\label{sec:age_modelling}
+% \subsection{Stellar ages and time-since-runaway} removed for condensed version
+% \label{sec:age_modelling}  % kept as phantom for cross-references
+\phantomsection\label{sec:age_modelling}
 
-% Content:
-%   - Motivation: Schlecker 2024 used a uniform age prior; PLATO forecasts need
-%     real per-star ages to make the atmosphere-persistence timescale meaningful.
-%   - Data source: Gaia DR3 FLAME isochrone ages.
-%   - Four age-assignment modes: strict, sampled, flame_flat, flat.
-%   - Post-runaway age Delta t_RG = t_star - t_RG from Baraffe 1998/2015 luminosity
-%     tracks.
-%   - Parametric atmospheric-lifetime decay tau_atm(M_p) -> effective inflation
-%     multiplier.
-
-
-\subsection{Water-mass-fraction population priors}
-\label{sec:composition_prior}
-
-% Content:
-%   - Motivation: replace Schlecker 2024's single injection value with a distribution.
-%   - Four priors:
-%       (1) dry-dominated (Rogers 2024)
-%       (2) log-normal centred on Earth-like x_H2O (Simpson 2017)
-%       (3) bimodal rocky/water-world (Luque & Palle 2022)
-%       (4) broad log-uniform (Kimura & Ikoma 2022)
-%   - Per-planet sampling of x_H2O in place of the fiducial value.
+% \subsection{Water-mass-fraction population priors} removed for condensed version
+% \label{sec:composition_prior}  % kept as phantom for cross-references
+\phantomsection\label{sec:composition_prior}
 
 
 % =======================================================================
 \section{Survey Simulator}
 \label{sec:survey_simulator}
 
-% Content:
-%   - Purpose: turn ground-truth population into mock observed catalogue.
-%   - Three steps in sequence:
-%       (1) geometric transit probability p_tr = R_star / a (~0.5% for HZ around G star)
-%       (2) SNR-limited detection cut based on mission photometric noise floor
-%       (3) Gaussian radius-measurement noise with per-planet sigma_R
-%   - Output: same column schema as generator output, fewer rows, noise-broadened
-%     radius column.
-%   - Both selection effects work against seeing the HZIED signature (see
-%     Sec. transit_method).
+The survey simulator converts the underlying population produced by
+the generator into a mock observed catalogue --- the object on which
+the hypothesis test will operate.  Three effects are applied in
+sequence.
+
+First, the geometric transit probability
+$p_{\mathrm{tr}} \approx R_\star / a$ retains only those planets whose
+orbital plane is close enough to the line of sight for a transit to
+occur; for a habitable-zone orbit around a solar-analog host this
+retains roughly $0.5\%$ of the underlying planets.  Second, an
+SNR-limited detection cut removes planets whose transit signal,
+integrated over the assumed mission duration, falls below the
+detection threshold of the simulated survey; the noise floor is
+parameterised as a per-star photometric standard deviation
+consistent with the chosen mission architecture.  Third, a Gaussian
+radius-measurement noise with per-planet standard deviation
+$\sigma_R$ is added to the true radius; this is the dominant driver
+of the individual-planet uncertainty budget for small, long-period
+transiters and is what the hypothesis test in
+\Cref{sec:inference_methodology} must marginalise over.
+
+The three steps are chained in order and produce a table with the
+same column schema as the generator output, but with fewer rows
+(from the transit and SNR cuts) and a noise-broadened radius column.
+That table is what the hypothesis-testing module takes as input.
+The two selection effects intrinsic to the geometry --- the low
+transit probability of long-period planets and the small transit
+depth of Earth-sized bodies --- both work against the observation of
+the \HZIED signature; the corresponding demographic biases are
+discussed in \Cref{sec:transit_method} and quantified for the
+\PLATO samples in \Cref{chap:results}.
 
 
 % =======================================================================
 \section{Hypothesis Testing}
 \label{sec:inference_methodology}
 
-% Content:
-%   - Single top-level entry point: run_hzied_analysis.
-%   - Two hypothesis tests + shared noise-realisation protocol described below.
+Every number quoted in \Cref{chap:results} comes out of the same
+top-level entry point, \texttt{run\_hzied\_analysis}, which supports
+two hypothesis tests and a shared noise-realisation protocol.  The
+subsection immediately below sets out why a Bayesian model
+comparison is the natural framework for a demographic test of this
+kind; the three subsections after it describe the tests themselves
+and the multi-seed noise-realisation protocol used throughout the
+results chapter.
+
+% Subsections merged into one flat section for condensed version
+% \subsection{Why Bayesian model comparison}
+\phantomsection\label{ssec:why_bayesian}
+
+\emph{Scaffold.}
+Frequentist significance testing versus Bayesian model comparison for
+population-level inferences.  The Bayesian evidence $Z$ as the
+marginal likelihood of a model, and the log-evidence difference
+between the step hypothesis $H_1$ and the flat null $H_0$,
+%
+\begin{equation}
+    \ln\Delta Z = \ln \frac{\mathcal{Z}(H_1)}{\mathcal{Z}(H_0)},
+    \label{eq:lnDZ}
+\end{equation}
+%
+as the natural comparison statistic \parencite{Skilling2004}.  Nested
+sampling via \texttt{dynesty} \parencite{Speagle2020} as the
+computational engine, chosen for its robust treatment of degenerate
+posteriors that plague the \HZIED parameter space at low
+$x_{\mathrm{H_2O}}$.  Detection thresholds in terms of $\ln\Delta Z$:
+moderate, strong, and decisive \parencite{Trotta2008}.
+\textcite{Schlecker2024} established that a sample of
+$N \gtrsim 100$ HZ planets with a few-percent radius precision and
+$f_\mathrm{rgh} \gtrsim 0.1$ is sufficient for a decisive detection
+($\ln\Delta Z \gtrsim 10$).  Why population-level tests are more
+robust than individual-planet inferences for questions about
+habitability: signal averaging over per-planet stochastic variation,
+statistical power scaling with sample size, and the ability to place
+informative upper limits in the case of a non-detection.
 
 
-\subsection{Why Bayesian model comparison}
-\label{ssec:why_bayesian}
+% \subsection{Full SMA-based test}
+\phantomsection\label{ssec:sma_test}
 
-% Content:
-%   - Frequentist vs Bayesian for population-level inferences.
-%   - Bayesian evidence Z as marginal likelihood; ln DeltaZ as comparison statistic.
-%   - Nested sampling via dynesty (Speagle 2020).
-%   - Detection thresholds (Trotta 2008): moderate, strong, decisive.
-%   - Schlecker 2024's headline: N >~ 100 HZ planets + f_rgh >~ 0.1 sufficient
-%     for decisive detection (ln DeltaZ >~ 10).
+The primary test in this thesis is the sliding-mean-average
+construction of \textcite{Schlecker2024}.  Planets are sorted by
+observed instellation $S_\mathrm{obs}$ and the observed radius
+$R_\mathrm{obs}$ is smoothed with a rolling window of $w=25$
+neighbours; \textsc{dynesty} \parencite{Speagle2020} then computes
+the evidence ratio between the step model H\textsubscript{1} ---
+with free parameters $S_\mathrm{thresh}$, $x_{\mathrm{H_2O}}$,
+$f_\mathrm{rgh}$, and a baseline average radius $\bar R$ --- and the
+flat null H\textsubscript{0} which shares only $\bar R$.  All priors
+are uniform except for $x_{\mathrm{H_2O}}$, which is log-uniform
+over the AGNI tabulated range, and every run uses
+$n_\mathrm{live}=100$.
 
-
-\subsection{Full SMA-based test}
-\label{ssec:sma_test}
-
-% Content:
-%   - Sliding-mean-average (SMA) construction of Schlecker 2024.
-%   - Sort planets by S_obs; smooth R_obs with rolling window w = 25 neighbours.
-%   - H1 free parameters: S_thresh, x_H2O, f_rgh, avg radius R_bar.
-%   - H0 shares only R_bar.
-%   - Priors: uniform except log-uniform x_H2O; n_live = 100.
-%   - Weakness: overlapping windows -> inflated evidence; needs two-mean cross-check.
-
-
-\subsection{Simple two-mean test at fixed $S_\mathrm{thresh}$}
-\label{ssec:hypothesis_test_methodology}
-
-% Content:
-%   - Two-aggregate Gaussian mean-comparison (hypothesis_mode='means').
-%   - Split at injected S_thresh into cold + hot subsets; each contributes one
-%     aggregate (mean radius, standard error).
-%   - H1: two free means (mu_cold, mu_hot); H0: single mu.
-%   - Closed-form Bayes factor available when priors are broad (used in
-%     Ch. kepler_tess on real data).
-%   - Lower bound on SMA test; check on SMA over-confidence.
+The rolling smoother makes the test powerful because it uses the
+full shape of the radius profile on both sides of the threshold.
+Its weakness is that adjacent window positions overlap by
+construction, so the Gaussian likelihood assumes independent data
+that isn't actually independent; the resulting $\ln\Delta Z$
+therefore overstates the evidence relative to a strict likelihood,
+and needs the sanity check described next.
 
 
-\subsection{Recovering $\hat{S}_\mathrm{thresh}$ from the posterior}
-\label{ssec:sthresh_recovery}
+% \subsection{Simple two-mean test at fixed $S_\mathrm{thresh}$}
+\phantomsection\label{ssec:hypothesis_test_methodology}
 
-% Content:
-%   - SMA chains carry S_thresh as first parameter -> posterior median per seed.
-%   - Diagnostic orthogonal to ln DeltaZ: decisive evidence + recovered threshold
-%     near injection = trustworthy detection.
-%   - Divergent recovered threshold = single-step model compensating for structure.
-%   - Concrete example in high-f_hycean regime (ssec:hycean_mixed).
+Sometimes we want a Bayes factor that treats $S_\mathrm{thresh}$ as
+known rather than fitting for it --- for a rough diagnostic, or to
+test the SMA result against the correlation-free lower bound.
+Setting \texttt{hypothesis\_mode='means'} in
+\texttt{run\_hzied\_analysis} switches from the full SMA inference
+to a two-aggregate Gaussian mean-comparison.
+
+The sample is split at the injected $S_\mathrm{thresh}$ into a cold
+subset and a hot subset.  Each side contributes exactly one aggregate
+data point --- its mean observed radius and the standard error of
+that mean.  The comparison then pits H\textsubscript{1} with two free
+means ($\mu_\mathrm{cold}$, $\mu_\mathrm{hot}$) against
+H\textsubscript{0} with a single free mean $\mu$.  Priors on each free
+mean are uniform on $[0.1,\,15]\,\Rearth$, and the Bayes factor comes
+either from a dynesty run on the two data points or from the
+closed-form Gaussian expression appropriate when the priors are
+broad.  The two agree to within sampler noise, and the closed-form
+version is what \Cref{chap:kepler_tess} uses on the real Kepler/TESS
+sample because it does not require the pipeline.
+
+By construction the two-mean test throws away the profile shape and
+keeps only two aggregates, so its Bayes factor is a lower bound on
+what the SMA test can extract.  It also acts as a check on the SMA
+number: an SMA $\ln\Delta Z$ that looks decisive but corresponds to
+an under-powered two-mean test is a sign that the rolling smoother
+is inflating the evidence rather than picking up a real step.
 
 
-\subsection{Multi-seed noise-realisation treatment}
-\label{ssec:multi_seed}
+% \subsection{Recovering $\hat{S}_\mathrm{thresh}$ from the posterior}
+\phantomsection\label{ssec:sthresh_recovery}
 
-% Content:
-%   - Motivation: one seed = one number is misleading (large seed-to-seed variation).
-%   - Protocol: 10 noise realisations per grid point.
-%   - Per-grid-point seed base s_i = s_0 + Delta*i with Delta = 200; internal
-%     n_trials = 10 uses s_i + 13*k for k = 0..9.
-%   - Collapse to median + 16-84% percentile band per grid point.
-%   - Every Bayes factor quoted in Ch. results is a median across 10 seeds.
+The SMA chains carry $S_\mathrm{thresh}$ as their first parameter,
+and every sweep figure in \Cref{chap:results} with a right-hand
+panel simply reports the posterior median of that column per noise
+realisation.  Comparing that recovered $\hat{S}_\mathrm{thresh}$
+against the injected value gives a second diagnostic that is largely
+orthogonal to $\ln\Delta Z$: if the evidence is decisive and the
+threshold recovers near the injected value, the detection is
+trustworthy; if the evidence is decisive but $\hat{S}_\mathrm{thresh}$
+drifts wildly, the single-step model is compensating for structure
+it cannot represent.  \Cref{ssec:hycean_mixed} shows a concrete
+example in the high-$f_\mathrm{hycean}$ regime, where $\ln\Delta Z$
+climbs past $200$ but the recovered threshold overshoots the
+injected $280\,\mathrm{W\,m^{-2}}$ by hundreds of units.
+
+
+% \subsection{Multi-seed noise-realisation treatment}
+\phantomsection\label{ssec:multi_seed}
+
+One call to the pipeline uses one measurement-noise draw and one
+sampler seed, and the resulting $\ln\Delta Z$ is more variable than
+one might guess.  On the wrr sweep of \Cref{ssec:wrr_sweep}, for
+instance, changing the seed at fixed injection shifts the reported
+Bayes factor by roughly the same amount as changing the injected
+water content by half an order of magnitude.  Reading any
+single-seed number as a definitive value would therefore be
+misleading.
+
+Every sweep figure in \Cref{chap:results} runs ten independent noise
+realisations per grid point.  The loop picks a per-grid-point seed
+base $s_i = s_0 + \Delta\,i$ (with $\Delta=200$, generous enough
+that no two grid points can collide in the inference cache even
+when the planet count happens to be constant across the sweep ---
+as on P4 throughout the wrr sweep), then runs \texttt{n\_trials=10},
+which internally uses seeds $s_i + 13\,k$ for $k = 0,\ldots,9$.  The
+resulting ten $\ln\Delta Z$ and ten $\hat{S}_\mathrm{thresh}$ values
+are collapsed to a median and a $16$--$84\,\%$ percentile band per
+grid point, and those are what the sweep figures plot.
+
+Every Bayes factor quoted for a specific point in this thesis is
+therefore a median across ten seeds, and the accompanying
+seed-to-seed range should be read as the effective uncertainty at
+$n_\mathrm{live}=100$.
+
+
+% =======================================================================
+\section{Simulation Configuration}
+\label{sec:simulation_config}
+
+\emph{Scaffold.}
+Fiducial choices adopted throughout this work: \PLATO P4 as the
+headline sample, P5 as the secondary sample;
+\texttt{agni\_updated} radius inflation with the
+\textcite{DornLichtenberg2021} water-incorporation correction;
+strict FLAME age assignment.  Per-sample radius precision drawn from
+the \emph{\PLATO Definition Study Report} \parencite{ESA2017PLATO}.
+Observable cuts on planet mass, transit depth, and instellation.
+Complete tabulation of the fiducial parameter set.

@@ -1,19 +1,247 @@
 \chapter{The PLATO Mission}
 \label{chap:plato_mission}
 
-% (write section body here)
+\Cref{chap:kepler_tess} showed that the current transit catalogue does
+not contain the planets the \HZIED test needs.  This chapter describes
+the survey that is about to change that: ESA's \PLATO mission
+\parencite{Rauer2016,ESA2017PLATO}, its target-sample structure
+\parencite{Nascimbeni2022}, and the \PLATO Input Catalogue that feeds
+the forecast in \Cref{chap:results}.
 
-\section{Mission concept}
+
+% Sections 2.6.1–2.6.4 merged into one section for condensed version
+\section{PLATO mission and target samples}
 \label{sec:plato_mission}
+\phantomsection\label{sec:plato_target_samples}
+\phantomsection\label{sec:pic_integration}
+\phantomsection\label{sec:plato_samples}
 
-% (write section body here)
+\emph{Scaffold: mission concept.}
+\PLATO as ESA's M3 medium-class mission and its role as the successor
+to \Kepler{} and \TESS{}.  24 normal cameras and 2 fast cameras,
+photometric precision $34\,\mathrm{ppm}\,\mathrm{h}^{-1/2}$ on the
+brightest targets, structure of the long-duration observation phase
+and two step-and-stare fields.
 
-\section{Target samples P1--P5}
-\label{sec:plato_samples}
+% Labels from former §Target samples P1-P5, §PLATO Input Catalogue integration,
+% §PLATO Target Samples kept as phantoms above.
 
-% (write section body here)
+% Former \subsection{The PLATO Input Catalog and sample structure} merged:
+\phantomsection\label{sec:pic}
 
-\section{Expected small-planet yield}
-\label{sec:plato_yield}
+The \PLATO Input Catalog \parencite{Montalto2021} is the official
+pre-selected target list from which \PLATO will download light curves
+during the long-duration observation phase.  The version used here
+(PIC~v2.2.0.1) covers the LOPS2 southern field, whose coordinates were
+identified by \textcite{Nascimbeni2022} as the optimal choice for the
+first LOP field.
 
-% (write section body here)
+Stars in the PIC are grouped into four photometric priority samples,
+formally defined in the \PLATO Science Requirements Document and
+described in \textcite{Nascimbeni2022}. The numbering skips P3, which
+was eliminated during the mission design phase while the remaining labels
+were kept unchanged \parencite{Nascimbeni2022}.  The samples are defined
+by spectral type, apparent magnitude and a minimum
+photometric noise requirement for P1 and P2
+(\Cref{tab:plato_samples}).
+
+\begin{table}[H]
+    \centering
+    \caption[PLATO Input Catalog stellar samples]{%
+        \PLATO stellar samples in the LOPS2 field (PIC~v2.2.0.1).
+        Sample definitions from \textcite{Nascimbeni2022}; star counts
+        from the processed PIC parquets used in this work; $\sigma_R$
+        are per-sample pipeline defaults \parencite{ESA2017PLATO}.
+        P3 was eliminated during mission design; the numbering is
+        unchanged.}
+    \label{tab:plato_samples}
+    \begin{tabular}{lllrrl}
+        \toprule
+        Sample & Types & Limit & $N_\star$ (LOPS2) & $\sigma_R$ & Role \\
+        \midrule
+        P2 & F5--K7 dwarfs/subgiants & $V < 8.5$ & $605$     & $0.8\%$ & not analysed \\
+        P1 & F5--K7 dwarfs/subgiants & $V < 11$  & $9\,665$  & $1\%$   & not analysed \\
+        P4 & M dwarfs ($>$K7)        & $V < 16$  & $13\,102$ & $4\%$   & primary \\
+        P5 & F5--late K dwarfs/subgiants & $V < 13$ & $158\,285$ & $3\%$ & primary \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\paragraph{P2 asteroseismic reference stars.}
+P2 is the brightest sub-sample ($V \lesssim 8$), containing $605$ FGK
+stars for which \PLATO will deliver the most precise asteroseismic
+characterisation.  Their stellar masses and radii will be known to
+$\lesssim 1\%$, enabling sub-percent planetary radius measurements.
+However, the sample is too small to provide a statistically meaningful
+number of habitable-zone planets on both sides of $S_\mathrm{thresh}$,
+and it is therefore not analysed in this thesis.
+
+\paragraph{P1 bright FGK dwarfs.}
+P1 contains $9\,665$ FGK dwarfs at $V \lesssim 11$, the core science
+sample of the \PLATO LOP mission.  These stars will receive
+asteroseismology follow-up, and planet radii will be determined to $1\%$.
+Although P1 is the highest-priority sample from the mission's perspective,
+it still yields too few habitable-zone rocky planets for a robust
+demographic test: the geometric transit probability for an Earth analogue
+around a G dwarf is only $\approx 0.5\%$, and with $\sim 10^4$ stars the
+expected count of detected HZ transiting planets is a few tens at most.
+P1 is not analysed further here.
+
+\paragraph{P4 M-dwarf sample.}
+P4 contains $13\,102$ M dwarfs spanning $T_\mathrm{eff} = 2926$--$3921\,\mathrm{K}$
+and $R_\star = 0.16$--$0.63\,\Rsun$.  M dwarfs are attractive for the
+\HZIED test for two reasons.  First, their habitable zones lie at orbital
+separations of $0.1$--$0.3\,\mathrm{au}$, giving geometric transit
+probabilities of $\sim 5$--$10\%$ — an order of magnitude larger than
+for a solar-type star.  Second, the small stellar radii amplify the
+transit depth of an Earth-sized planet to several hundred ppm.  The
+trade-off is a larger photometric noise per star (P4 stars extend to
+$V \approx 15$), giving a per-planet radius uncertainty of $\sigma_R = 4\%$
+in the pipeline default.
+
+\paragraph{P5 faint FGK sample.}
+P5 is the largest sub-sample, with $158\,285$ FGK stars at $V \lesssim 13$.
+It contains $81\,301$ G-type, $65\,358$ F-type, and $11\,585$ K-type
+stars.  The reduced photometric precision relative to P1 ($\sigma_R = 3\%$
+vs $1\%$) is compensated by the large number of targets: even at a
+geometric transit probability of $\lesssim 1\%$, the P5 stellar pool is
+expected to yield the largest single-sample catalogue of transiting
+rocky habitable-zone planets of any \PLATO sub-sample.
+
+\paragraph{Why P4 and P5.}
+P4 and P5 together span the full stellar-mass range accessible to
+\PLATO and provide complementary paths to a \HZIED detection.  P4
+offers high per-planet transit probability and deep transits from compact
+habitable zones; P5 offers statistical power from its large number of
+FGK hosts.  Both samples are large enough that the Bioverse generator
+can populate them with $\mathcal{O}(100)$ detected habitable-zone planets,
+the threshold identified by \textcite{Schlecker2024} for a significant
+detection.  The analyses in \Cref{sec:p4_p5_baseline} apply the baseline
+runaway greenhouse model to P4, P5, and their combination.
+
+
+% =======================================================================
+\section{From Stellar Catalogue to Detectable Planets}
+\label{sec:planet_yield}
+
+Before running the \HZIED hypothesis test, the PIC stellar catalogue must
+be converted into a synthetic sample of detected transiting planets.  This
+conversion proceeds through three stages: planet generation, detection cuts,
+and measurement noise.  The table below traces how the initial pool of
+generated planets is reduced at each stage for each \PLATO sample.
+
+\subsection{Planet Generation}
+\label{ssec:planet_generation}
+
+Planet populations are drawn from the Bioverse generator using the
+\textcite{Bergsten2022} occurrence-rate model.  Each star receives planets
+according to the broken power-law radius distribution and period
+distribution of that work, with masses assigned via the probabilistic
+mass--radius relation of \textcite{ChenKipping2017}.  Stellar ages are
+drawn from the individual Gaia/FLAME age estimates attached to each PIC
+star (\texttt{age\_mode = `sampled'}), so the age distribution of the
+generated population reflects the actual age spread of the \PLATO targets.
+
+\Cref{tab:planet_cuts} shows the cumulative effect of each cut on the
+generated populations across all samples.  The generic sample (500 stars,
+Gaia-based) is included as the \textcite{Schlecker2024} reference.
+
+\begin{table}[H]
+    \centering
+    \caption[Planet detection cuts per \PLATO sample]{%
+        Cumulative effect of detection cuts on the generated planet
+        population for each sample.  Percentages are relative to the
+        count in the preceding row (step-wise retention).
+        The final yield is the fraction of generated planets that survive
+        all cuts and enter the \HZIED analysis.}
+    \label{tab:planet_cuts}
+    \setlength{\tabcolsep}{5pt}
+    \small
+    \begin{tabular}{lrrrrr}
+        \toprule
+        Step & Generic & P1 & P2 & P4 & P5 \\
+        \midrule
+        $N_\star$ (after quality cuts)
+            & 235\,240 & 9\,665 & 605 & 13\,102 & 158\,285 \\
+        $N_\mathrm{planets}$ generated
+            & 318\,018 & 11\,186 & 696 & 18\,243 & 184\,401 \\
+        \quad planets / star
+            & 1.35 & 1.16 & 1.15 & 1.39 & 1.16 \\
+        \midrule
+        After $P \leq 500\,\mathrm{d}$
+            & 318\,003 (100\%) & 11\,184 (100\%) & 696 (100\%)
+            & 18\,241 (100\%) & 184\,376 (100\%) \\
+        After $M \in [0.1,\,2.0]\,\Mearth$
+            & 121\,657 (38.3\%) & 3\,222 (28.8\%) & 209 (30.0\%)
+            & 6\,540 (35.9\%) & 53\,006 (28.7\%) \\
+        After $R > 0.75\,\Rearth$
+            & 121\,394 (99.8\%) & 3\,221 (100\%) & 209 (100\%)
+            & 6\,529 (99.8\%) & 52\,963 (99.5\%) \\
+        Transiting ($|b| \leq 1$)
+            & 2\,639 (2.2\%) & 142 (4.4\%) & 8 (3.8\%)
+            & 184 (2.8\%) & 2\,217 (4.2\%) \\
+        Depth $\geq 80\,\mathrm{ppm}$
+            & 2\,535 (96.1\%) & 37 (26.1\%) & 2 (25.0\%)
+            & 184 (100\%) & 576 (26.0\%) \\
+        $S_\mathrm{abs} \in [10,\,2000]\,\mathrm{W\,m^{-2}}$
+            & 1\,541 (60.8\%) & 6 (16.2\%) & 0 (0\%)
+            & 82 (44.6\%) & 60 (10.4\%) \\
+        \midrule
+        Yield (final / generated)
+            & 0.485\% & 0.054\% & 0.000\% & 0.449\% & 0.033\% \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\subsection{Detection Cuts and Observable Sample}
+\label{ssec:detection_cuts}
+
+The most consequential cut is the transit depth threshold of
+$80\,\mathrm{ppm}$, which eliminates Earth-sized planets around
+solar-type stars (transit depth $\approx 80\,\mathrm{ppm}$ for
+$R_p = 1\,\Rearth$, $R_\star = 1\,\Rsun$).  For the bright FGK
+samples P1 and P2, this cut combined with the mass ceiling at
+$2.05\,\Mearth$ removes essentially all rocky habitable-zone planets,
+leaving $N = 37$ for P1 and $N = 2$ for P2 before the instellation
+window cut, and $N = 6$ and $N = 0$ afterwards.  Neither sample
+provides enough planets for a rolling-window analysis with $w = 25$
+and are therefore excluded from the \HZIED test.
+
+For P4 M~dwarfs, the small stellar radii amplify the transit depth of
+an Earth-mass planet to several hundred ppm, so the depth cut retains
+all 184 transiting rocky planets (100\%).  The instellation window then
+selects those with $S_\mathrm{abs} \in [10,\,2000]\,\mathrm{W\,m^{-2}}$,
+yielding the 80--82 planets that enter the analysis.  P5 suffers the
+same depth attrition as P1 (26\%), but its large stellar pool produces
+58--60 planets in the instellation window.
+
+\Cref{fig:plato_baseline_hzied} shows the observable sample for P4 and
+P5 in the radius--instellation plane, colour-coded by classification:
+cold-side (blue), hot-side uninflated (grey), and hot-side inflated
+(red).  The vertical dashed line marks the injected runaway greenhouse
+threshold $S_\mathrm{thresh} = 280\,\mathrm{W\,m^{-2}}$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{plato_baseline_hzied}
+    \caption[Detected planet sample for \PLATO P4 and P5 (Turbet baseline)]{%
+        Detected transiting rocky planets in the radius--instellation
+        plane for the \PLATO P4 (left) and P5 (right) samples.
+        Populations generated with the \textcite{Bergsten2022}
+        occurrence-rate model; radii inflated with the
+        \textcite{Turbet2020} + \textcite{DornLichtenberg2021} model
+        at $x_{\mathrm{H_2O}} = 0.005$, $f_{\mathrm{rgh}} = 0.8$;
+        stellar ages from Gaia/FLAME (\texttt{age\_mode = `sampled'}).
+        Blue: cold-side planets ($S < S_\mathrm{thresh}$).
+        Grey: hot-side, uninflated.  Red: hot-side, inflated.
+        Error bars show $1\sigma$ measurement uncertainties
+        ($\sigma_S = 5\%$; $\sigma_R = 4\%$ P4, $3\%$ P5).
+        P4: $N = 80$ ($27$ cold, $8$ hot, $45$ inflated).
+        P5: $N = 58$ ($14$ cold, $7$ hot, $37$ inflated).}
+    \label{fig:plato_baseline_hzied}
+\end{figure}
+
+% Figure produced by:
+%   Src/figures/plato_baseline_hzied.py  →  Figures/generated/plato_baseline_hzied.pdf
+
+
